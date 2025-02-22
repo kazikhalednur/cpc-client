@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  studentId      String?   @unique
+  department     String?
+  batch          Int?
+  role           Role      @default(USER)
+  bio            String?   
+  github         String?   
+  linkedin       String?   
+  codeforces     String?   
+  codechef       String?   
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  posts    Post[]
+  contests ContestParticipation[]
+
+  @@index([email])
+  @@index([studentId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Contest {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  platform    String
+  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  participants ContestParticipation[]
+}
+
+model ContestParticipation {
+  id        String   @id @default(cuid())
+  userId    String
+  contestId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  contest   Contest  @relation(fields: [contestId], references: [id])
+}
+
+model Event {
+  id                  String   @id @default(cuid())
+  title               String
+  shortDescription    String
+  description         String   @db.Text
+  image               String
+  keynoteSpeaker      String
+  guests              String[]
+  eventDate           DateTime
+  registrationDeadline DateTime
+  venue               String
+  status              EventStatus @default(UPCOMING)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+  USER
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+} 
