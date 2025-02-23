@@ -74,17 +74,21 @@ model Post {
 }
 
 model Contest {
-  id          String   @id @default(cuid())
-  title       String
-  description String   @db.Text
-  startTime   DateTime
-  endTime     DateTime
-  platform    String
-  type        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  participants ContestParticipation[]
+  id           String            @id @default(cuid())
+  title        String
+  description  String            @db.Text
+  startTime    DateTime
+  endTime      DateTime
+  platform     String
+  difficulty   ContestDifficulty
+  prize        String
+  image        String
+  status       String
+  participants Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  
+  participations ContestParticipation[]
 }
 
 model ContestParticipation {
@@ -123,4 +127,10 @@ enum EventStatus {
   UPCOMING
   ONGOING
   COMPLETED
+}
+
+enum ContestDifficulty {
+  EASY
+  MEDIUM
+  HARD
 } 

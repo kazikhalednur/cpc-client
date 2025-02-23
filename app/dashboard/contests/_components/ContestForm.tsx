@@ -5,17 +5,18 @@ import {
   FiX,
   FiImage,
   FiCalendar,
-  FiMapPin,
-  FiUsers,
+  FiClock,
+  FiAward,
+  FiTag,
   FiInfo,
 } from "react-icons/fi";
-import { EventData } from "@/types/event";
+import { Contest } from "@/app/types";
 import { motion } from "framer-motion";
 
-interface EventFormProps {
-  event?: EventData | null;
+interface ContestFormProps {
+  contest?: Contest | null;
   onClose: () => void;
-  onSubmit: (data: Partial<EventData>) => void;
+  onSubmit: (data: Partial<Contest>) => void;
 }
 
 const FormSection = ({
@@ -36,41 +37,32 @@ const FormSection = ({
   </div>
 );
 
-export default function EventForm({
-  event,
+export default function ContestForm({
+  contest,
   onClose,
   onSubmit,
-}: EventFormProps) {
+}: ContestFormProps) {
   const [formData, setFormData] = useState({
-    title: event?.title || "",
-    shortDescription: event?.shortDescription || "",
-    description: event?.description || "",
-    image: event?.image || "",
-    keynoteSpeaker: event?.keynoteSpeaker || "",
-    guests: event?.guests || [],
-    eventDate: event?.eventDate?.split("T")[0] || "",
-    time: event?.eventDate?.split("T")[1]?.split(".")[0] || "",
-    registrationDeadline: event?.registrationDeadline?.split("T")[0] || "",
-    deadlineTime:
-      event?.registrationDeadline?.split("T")[1]?.split(".")[0] || "",
-    venue: event?.venue || "",
-    status: event?.status || "UPCOMING",
+    title: contest?.title || "",
+    description: contest?.description || "",
+    date: contest?.date?.split("T")[0] || "",
+    time: contest?.date?.split("T")[1]?.split(".")[0] || "",
+    platform: contest?.platform || "",
+    difficulty: contest?.difficulty || "Medium",
+    prize: contest?.prize || "",
+    image: contest?.image || "",
+    status: contest?.status || "Upcoming",
+    participants: contest?.participants || 0,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const eventDateTime = new Date(
-      `${formData.eventDate}T${formData.time}`
+    const combinedDate = new Date(
+      `${formData.date}T${formData.time}`
     ).toISOString();
-    const deadlineDateTime = new Date(
-      `${formData.registrationDeadline}T${formData.deadlineTime}`
-    ).toISOString();
-
     onSubmit({
       ...formData,
-      eventDate: eventDateTime,
-      registrationDeadline: deadlineDateTime,
-      guests: formData.guests,
+      date: combinedDate,
     });
   };
 
@@ -94,10 +86,10 @@ export default function EventForm({
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {event ? "Edit Event" : "Create New Event"}
+                {contest ? "Edit Contest" : "Create New Contest"}
               </h2>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Fill in the details for your event
+                Fill in the details for your programming contest
               </p>
             </div>
             <button
@@ -124,31 +116,13 @@ export default function EventForm({
                     setFormData({ ...formData, title: e.target.value })
                   }
                   className={inputClasses}
-                  placeholder="Enter event title"
+                  placeholder="e.g., Weekly Algorithm Challenge"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Short Description
-                </label>
-                <input
-                  type="text"
-                  value={formData.shortDescription}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      shortDescription: e.target.value,
-                    })
-                  }
-                  className={inputClasses}
-                  placeholder="Brief description of the event"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Full Description
+                  Description
                 </label>
                 <textarea
                   value={formData.description}
@@ -157,7 +131,7 @@ export default function EventForm({
                   }
                   rows={4}
                   className={inputClasses}
-                  placeholder="Detailed description of the event..."
+                  placeholder="Describe the contest objectives and requirements..."
                   required
                 />
               </div>
@@ -168,13 +142,13 @@ export default function EventForm({
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Event Date
+                  Date
                 </label>
                 <input
                   type="date"
-                  value={formData.eventDate}
+                  value={formData.date}
                   onChange={(e) =>
-                    setFormData({ ...formData, eventDate: e.target.value })
+                    setFormData({ ...formData, date: e.target.value })
                   }
                   className={inputClasses}
                   required
@@ -182,7 +156,7 @@ export default function EventForm({
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Event Time
+                  Time
                 </label>
                 <input
                   type="time"
@@ -194,93 +168,85 @@ export default function EventForm({
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Registration Deadline
-                </label>
-                <input
-                  type="date"
-                  value={formData.registrationDeadline}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      registrationDeadline: e.target.value,
-                    })
-                  }
-                  className={inputClasses}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Deadline Time
-                </label>
-                <input
-                  type="time"
-                  value={formData.deadlineTime}
-                  onChange={(e) =>
-                    setFormData({ ...formData, deadlineTime: e.target.value })
-                  }
-                  className={inputClasses}
-                  required
-                />
-              </div>
             </div>
           </FormSection>
 
-          <FormSection title="Location & Speakers" icon={FiMapPin}>
+          <FormSection title="Contest Details" icon={FiAward}>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Venue
+                  Platform
                 </label>
                 <input
                   type="text"
-                  value={formData.venue}
+                  value={formData.platform}
                   onChange={(e) =>
-                    setFormData({ ...formData, venue: e.target.value })
+                    setFormData({ ...formData, platform: e.target.value })
                   }
                   className={inputClasses}
-                  placeholder="Event location"
+                  placeholder="e.g., Codeforces, LeetCode"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Keynote Speaker
+                  Prize
                 </label>
                 <input
                   type="text"
-                  value={formData.keynoteSpeaker}
+                  value={formData.prize}
                   onChange={(e) =>
-                    setFormData({ ...formData, keynoteSpeaker: e.target.value })
+                    setFormData({ ...formData, prize: e.target.value })
                   }
                   className={inputClasses}
-                  placeholder="Main speaker name"
+                  placeholder="e.g., $500"
                   required
                 />
               </div>
-              <div className="col-span-2">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Guest Speakers
+                  Difficulty
                 </label>
-                <input
-                  type="text"
-                  value={formData.guests.join(", ")}
+                <select
+                  value={formData.difficulty}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      guests: e.target.value.split(",").map((s) => s.trim()),
+                      difficulty: e.target.value as Contest["difficulty"],
                     })
                   }
                   className={inputClasses}
-                  placeholder="Enter guest names separated by commas"
-                />
+                  required
+                >
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  Status
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      status: e.target.value as Contest["status"],
+                    })
+                  }
+                  className={inputClasses}
+                  required
+                >
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="Ongoing">Ongoing</option>
+                  <option value="Completed">Completed</option>
+                </select>
               </div>
             </div>
           </FormSection>
 
-          <FormSection title="Event Image" icon={FiImage}>
+          <FormSection title="Contest Image" icon={FiImage}>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Image URL
@@ -315,7 +281,7 @@ export default function EventForm({
                   rounded-lg hover:from-indigo-600 hover:to-purple-700 shadow-sm 
                   hover:shadow-indigo-500/25 transition-all duration-200"
               >
-                {event ? "Update Event" : "Create Event"}
+                {contest ? "Update Contest" : "Create Contest"}
               </button>
             </div>
           </div>

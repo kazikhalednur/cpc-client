@@ -12,12 +12,13 @@ import {
   FiUser,
   FiSearch,
 } from "react-icons/fi";
-import EventForm, { EventFormData } from "./_components/EventForm";
+import EventForm from "./_components/EventForm";
 import { useDebounce } from "@/hooks/useDebounce";
 import { EventData } from "@/types/event";
 import { Role } from "@/types/role";
 import toast from "react-hot-toast";
 import { LoadingSpinner } from "@/app/components/LoadingSpinner";
+import { motion } from "framer-motion";
 
 type EventStatus = "UPCOMING" | "ONGOING" | "COMPLETED";
 
@@ -53,11 +54,11 @@ export default function EventsPage() {
     fetchEvents();
   }, [debouncedSearch, status]);
 
-  const handleSubmit = async (data: EventFormData) => {
+  const handleSubmit = async (data: Partial<EventData>) => {
     try {
       const formData = {
         ...data,
-        guests: data.guests.filter(Boolean), // Remove empty strings
+        guests: data.guests?.filter(Boolean) ?? [], // Add null check and default to empty array
       };
 
       const res = await fetch(
@@ -113,40 +114,61 @@ export default function EventsPage() {
     }
   };
 
+  const getStatusColor = (status: EventStatus) => {
+    const colors = {
+      UPCOMING: "bg-emerald-500 text-white",
+      ONGOING: "bg-blue-500 text-white",
+      COMPLETED: "bg-gray-500 text-white",
+    };
+    return colors[status] || colors.UPCOMING;
+  };
+
   if (!isAllowed) return null;
 
   return (
     <div className="space-y-6">
-      {/* Header with search and filters */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-          Manage Events
-        </h1>
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Events
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Manage and organize your events
+          </p>
+        </div>
         <button
-          onClick={() => setIsFormOpen(true)}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg transition-colors shadow-md hover:shadow-lg"
+          onClick={() => {
+            setSelectedEvent(null);
+            setIsFormOpen(true);
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 
+            text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all duration-200 
+            shadow-sm hover:shadow-indigo-500/25"
         >
-          <FiPlus className="h-5 w-5" />
+          <FiPlus className="w-5 h-5" />
           Add New Event
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      {/* Filters Section */}
+      <div className="grid md:flex gap-4 items-center bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="relative flex-1">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
+            placeholder="Search events..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search events..."
-            className="pl-10 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-2.5 text-gray-900 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
+              dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
           />
         </div>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as EventStatus | "ALL")}
-          className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-2.5 text-gray-900 dark:text-white"
+          className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
+            dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
         >
           <option value="ALL">All Status</option>
           <option value="UPCOMING">Upcoming</option>
@@ -155,23 +177,25 @@ export default function EventsPage() {
         </select>
       </div>
 
-      {/* Event List */}
+      {/* Loading State */}
       {isLoading ? (
         <div className="flex justify-center items-center min-h-[400px]">
           <LoadingSpinner className="h-8 w-8" />
         </div>
       ) : events.length === 0 ? (
-        <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-          <div className="text-6xl mb-4">🎪</div>
-          <h3 className="text-xl font-semibold mb-2">No events found</h3>
+        <div className="text-center py-12">
+          <p className="text-gray-500 dark:text-gray-400">No events found</p>
           <p>Start by creating your first event!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <div
+            <motion.div
               key={event.id}
-              className="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl 
+                transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700"
             >
               <div className="relative h-48">
                 <img
@@ -180,31 +204,17 @@ export default function EventsPage() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute top-2 right-2">
-                  <span
-                    className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
-                      event.status === "UPCOMING"
-                        ? "bg-emerald-500 text-white"
-                        : event.status === "ONGOING"
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-500 text-white"
-                    }`}
-                  >
-                    {event.status}
-                  </span>
-                </div>
-                <div className="absolute bottom-2 left-2 right-2">
+                <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-lg font-bold text-white line-clamp-1">
                     {event.title}
                   </h3>
+                  <p className="text-sm text-gray-200 line-clamp-1">
+                    {event.shortDescription}
+                  </p>
                 </div>
               </div>
 
               <div className="p-5">
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                  {event.shortDescription}
-                </p>
-
                 <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
                   <div className="flex items-center gap-2">
                     <FiCalendar className="h-4 w-4 text-indigo-500" />
@@ -232,26 +242,30 @@ export default function EventsPage() {
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       setSelectedEvent(event);
                       setIsFormOpen(true);
                     }}
-                    className="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg"
                     title="Edit Event"
                   >
                     <FiEdit2 className="h-5 w-5" />
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleDelete(event.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg"
                     title="Delete Event"
                   >
                     <FiTrash2 className="h-5 w-5" />
-                  </button>
+                  </motion.button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
