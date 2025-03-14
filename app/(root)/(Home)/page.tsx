@@ -12,12 +12,12 @@ import ContestCard from "./_views/ContestCard";
 import QuickAccessCard from "./_views/QuickAccessCard";
 import AchievementCard from "./_views/AchievementCard";
 import WingsSection from "./_views/WingsSection";
-import HeroSection from "./_views/HeroSection";
 import NoticeSection from "./_views/NoticeSection";
 import { useSession } from "next-auth/react";
 import { Navigation } from "@/app/components/Navigation";
 import FeaturedContests from "./_views/FeaturedContests";
 import EventsSlider from "./_views/EventsSlider";
+import HeroSection from "@/app/dashboard/contests/_components/HeroSection";
 
 export default function Home() {
   return (

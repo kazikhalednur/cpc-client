@@ -13,6 +13,7 @@ const WingsSection = () => {
       gradient: "from-blue-500 to-indigo-500",
       hoverGradient: "from-blue-600 to-indigo-600",
       iconBg: "bg-blue-500/10",
+      iconColor: "text-blue-500",
       href: "/wings/acm",
     },
     {
@@ -23,6 +24,7 @@ const WingsSection = () => {
       gradient: "from-purple-500 to-pink-500",
       hoverGradient: "from-purple-600 to-pink-600",
       iconBg: "bg-purple-500/10",
+      iconColor: "text-purple-500",
       href: "/wings/development",
     },
     {
@@ -33,6 +35,7 @@ const WingsSection = () => {
       gradient: "from-emerald-500 to-teal-500",
       hoverGradient: "from-emerald-600 to-teal-600",
       iconBg: "bg-emerald-500/10",
+      iconColor: "text-emerald-500",
       href: "/wings/research",
     },
     {
@@ -43,6 +46,7 @@ const WingsSection = () => {
       gradient: "from-orange-500 to-red-500",
       hoverGradient: "from-orange-600 to-red-600",
       iconBg: "bg-orange-500/10",
+      iconColor: "text-orange-500",
       href: "/wings/job",
     },
   ];
@@ -69,10 +73,10 @@ const WingsSection = () => {
                          dark:border-gray-700 flex flex-col"
             >
               <div className="flex items-center gap-4 mb-4">
-                <div className={`p-3 rounded-lg ${wing.iconBg}`}>
-                  <wing.icon
-                    className={`w-6 h-6 text-transparent bg-clip-text bg-gradient-to-r ${wing.gradient}`}
-                  />
+                <div
+                  className={`p-3 rounded-lg ${wing.iconBg} flex items-center justify-center`}
+                >
+                  <wing.icon className={`w-6 h-6 ${wing.iconColor}`} />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {wing.title}
