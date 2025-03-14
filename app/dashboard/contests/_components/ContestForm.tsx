@@ -14,9 +14,9 @@ import { Contest } from "@/app/types";
 import { motion } from "framer-motion";
 
 interface ContestFormProps {
-  contest?: Contest | null;
   onClose: () => void;
-  onSubmit: (data: Partial<Contest>) => void;
+  onSubmit: (data: Partial<Contest>) => Promise<void>;
+  initialData?: Contest;
 }
 
 const FormSection = ({
@@ -38,32 +38,83 @@ const FormSection = ({
 );
 
 export default function ContestForm({
-  contest,
   onClose,
   onSubmit,
+  initialData,
 }: ContestFormProps) {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: contest?.title || "",
-    description: contest?.description || "",
-    date: contest?.date?.split("T")[0] || "",
-    time: contest?.date?.split("T")[1]?.split(".")[0] || "",
-    platform: contest?.platform || "",
-    difficulty: contest?.difficulty || "Medium",
-    prize: contest?.prize || "",
-    image: contest?.image || "",
-    status: contest?.status || "Upcoming",
-    participants: contest?.participants || 0,
+    title: initialData?.title || "",
+    description: initialData?.description || "",
+    startDate: initialData?.startTime
+      ? new Date(initialData.startTime).toISOString().split("T")[0]
+      : "",
+    startTime: initialData?.startTime
+      ? new Date(initialData.startTime).toTimeString().split(" ")[0].slice(0, 5)
+      : "",
+    endDate: initialData?.endTime
+      ? new Date(initialData.endTime).toISOString().split("T")[0]
+      : "",
+    endTime: initialData?.endTime
+      ? new Date(initialData.endTime).toTimeString().split(" ")[0].slice(0, 5)
+      : "",
+    platform: initialData?.platform || "",
+    difficulty: initialData?.difficulty || "EASY",
+    prize: initialData?.prize || "",
+    image: initialData?.image || "",
+    status: initialData?.status || "UPCOMING",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title) newErrors.title = "Title is required";
+    if (!formData.description)
+      newErrors.description = "Description is required";
+    if (!formData.startDate) newErrors.startDate = "Start date is required";
+    if (!formData.startTime) newErrors.startTime = "Start time is required";
+    if (!formData.endDate) newErrors.endDate = "End date is required";
+    if (!formData.endTime) newErrors.endTime = "End time is required";
+    if (!formData.platform) newErrors.platform = "Platform is required";
+    if (!formData.prize) newErrors.prize = "Prize is required";
+
+    const startDateTime = new Date(
+      `${formData.startDate}T${formData.startTime}`
+    );
+    const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
+
+    if (endDateTime <= startDateTime) {
+      newErrors.endDate = "End date must be after start date";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const combinedDate = new Date(
-      `${formData.date}T${formData.time}`
-    ).toISOString();
-    onSubmit({
-      ...formData,
-      date: combinedDate,
-    });
+
+    if (!validateForm()) return;
+
+    try {
+      setLoading(true);
+      const startDateTime = new Date(
+        `${formData.startDate}T${formData.startTime}`
+      );
+      const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
+
+      await onSubmit({
+        ...formData,
+        startTime: startDateTime.toISOString(),
+        endTime: endDateTime.toISOString(),
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClasses = `w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 
@@ -86,7 +137,7 @@ export default function ContestForm({
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {contest ? "Edit Contest" : "Create New Contest"}
+                {initialData ? "Edit Contest" : "Create New Contest"}
               </h2>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Fill in the details for your programming contest
@@ -115,10 +166,15 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.title ? "border-red-500" : ""
+                  }`}
                   placeholder="e.g., Weekly Algorithm Challenge"
                   required
                 />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -130,10 +186,17 @@ export default function ContestForm({
                     setFormData({ ...formData, description: e.target.value })
                   }
                   rows={4}
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.description ? "border-red-500" : ""
+                  }`}
                   placeholder="Describe the contest objectives and requirements..."
                   required
                 />
+                {errors.description && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.description}
+                  </p>
+                )}
               </div>
             </div>
           </FormSection>
@@ -142,31 +205,83 @@ export default function ContestForm({
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Date
+                  Start Date
                 </label>
                 <input
                   type="date"
-                  value={formData.date}
+                  value={formData.startDate}
                   onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
+                    setFormData({ ...formData, startDate: e.target.value })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.startDate ? "border-red-500" : ""
+                  }`}
                   required
                 />
+                {errors.startDate && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.startDate}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Time
+                  Start Time
                 </label>
                 <input
                   type="time"
-                  value={formData.time}
+                  value={formData.startTime}
                   onChange={(e) =>
-                    setFormData({ ...formData, time: e.target.value })
+                    setFormData({ ...formData, startTime: e.target.value })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.startTime ? "border-red-500" : ""
+                  }`}
                   required
                 />
+                {errors.startTime && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.startTime}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
+                  className={`${inputClasses} ${
+                    errors.endDate ? "border-red-500" : ""
+                  }`}
+                  required
+                />
+                {errors.endDate && (
+                  <p className="mt-1 text-sm text-red-500">{errors.endDate}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  End Time
+                </label>
+                <input
+                  type="time"
+                  value={formData.endTime}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endTime: e.target.value })
+                  }
+                  className={`${inputClasses} ${
+                    errors.endTime ? "border-red-500" : ""
+                  }`}
+                  required
+                />
+                {errors.endTime && (
+                  <p className="mt-1 text-sm text-red-500">{errors.endTime}</p>
+                )}
               </div>
             </div>
           </FormSection>
@@ -183,10 +298,15 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, platform: e.target.value })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.platform ? "border-red-500" : ""
+                  }`}
                   placeholder="e.g., Codeforces, LeetCode"
                   required
                 />
+                {errors.platform && (
+                  <p className="mt-1 text-sm text-red-500">{errors.platform}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -198,10 +318,15 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, prize: e.target.value })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.prize ? "border-red-500" : ""
+                  }`}
                   placeholder="e.g., $500"
                   required
                 />
+                {errors.prize && (
+                  <p className="mt-1 text-sm text-red-500">{errors.prize}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -215,13 +340,20 @@ export default function ContestForm({
                       difficulty: e.target.value as Contest["difficulty"],
                     })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.difficulty ? "border-red-500" : ""
+                  }`}
                   required
                 >
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
+                  <option value="EASY">Easy</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HARD">Hard</option>
                 </select>
+                {errors.difficulty && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.difficulty}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -235,13 +367,18 @@ export default function ContestForm({
                       status: e.target.value as Contest["status"],
                     })
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} ${
+                    errors.status ? "border-red-500" : ""
+                  }`}
                   required
                 >
-                  <option value="Upcoming">Upcoming</option>
-                  <option value="Ongoing">Ongoing</option>
-                  <option value="Completed">Completed</option>
+                  <option value="UPCOMING">Upcoming</option>
+                  <option value="ONGOING">Ongoing</option>
+                  <option value="COMPLETED">Completed</option>
                 </select>
+                {errors.status && (
+                  <p className="mt-1 text-sm text-red-500">{errors.status}</p>
+                )}
               </div>
             </div>
           </FormSection>
@@ -257,10 +394,15 @@ export default function ContestForm({
                 onChange={(e) =>
                   setFormData({ ...formData, image: e.target.value })
                 }
-                className={inputClasses}
+                className={`${inputClasses} ${
+                  errors.image ? "border-red-500" : ""
+                }`}
                 placeholder="Enter image URL"
                 required
               />
+              {errors.image && (
+                <p className="mt-1 text-sm text-red-500">{errors.image}</p>
+              )}
             </div>
           </FormSection>
 
@@ -277,11 +419,12 @@ export default function ContestForm({
               </button>
               <button
                 type="submit"
+                disabled={loading}
                 className="px-5 py-2.5 text-white bg-gradient-to-r from-indigo-500 to-purple-600 
                   rounded-lg hover:from-indigo-600 hover:to-purple-700 shadow-sm 
-                  hover:shadow-indigo-500/25 transition-all duration-200"
+                  hover:shadow-indigo-500/25 transition-all duration-200 disabled:opacity-50"
               >
-                {contest ? "Update Contest" : "Create Contest"}
+                {loading ? "Saving..." : "Save"}
               </button>
             </div>
           </div>

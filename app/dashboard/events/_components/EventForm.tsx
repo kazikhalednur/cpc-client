@@ -49,35 +49,51 @@ export default function EventForm({
     keynoteSpeaker: event?.keynoteSpeaker || "",
     guests: event?.guests || [],
     eventDate: event?.eventDate?.split("T")[0] || "",
-    time: event?.eventDate?.split("T")[1]?.split(".")[0] || "",
+    time: event?.eventDate?.split("T")[1]?.split(".")[0]?.slice(0, 5) || "",
     registrationDeadline: event?.registrationDeadline?.split("T")[0] || "",
     deadlineTime:
-      event?.registrationDeadline?.split("T")[1]?.split(".")[0] || "",
+      event?.registrationDeadline?.split("T")[1]?.split(".")[0]?.slice(0, 5) ||
+      "",
     venue: event?.venue || "",
     status: event?.status || "UPCOMING",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const eventDateTime = new Date(
-      `${formData.eventDate}T${formData.time}`
-    ).toISOString();
-    const deadlineDateTime = new Date(
-      `${formData.registrationDeadline}T${formData.deadlineTime}`
-    ).toISOString();
 
+    // Combine date and time for event date
+    const eventDateTime = new Date(
+      `${formData.eventDate}T${formData.time || "00:00"}:00.000Z`
+    );
+
+    // Combine date and time for registration deadline
+    const deadlineDateTime = new Date(
+      `${formData.registrationDeadline}T${
+        formData.deadlineTime || "00:00"
+      }:00.000Z`
+    );
+
+    // Submit only the fields that exist in the schema
     onSubmit({
-      ...formData,
-      eventDate: eventDateTime,
-      registrationDeadline: deadlineDateTime,
-      guests: formData.guests,
+      title: formData.title,
+      shortDescription: formData.shortDescription,
+      description: formData.description,
+      image: formData.image,
+      keynoteSpeaker: formData.keynoteSpeaker,
+      guests: formData.guests.filter(Boolean),
+      eventDate: eventDateTime.toISOString(),
+      registrationDeadline: deadlineDateTime.toISOString(),
+      venue: formData.venue,
+      status: formData.status as "UPCOMING" | "ONGOING" | "COMPLETED",
     });
   };
 
   const inputClasses = `w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 
-    bg-white dark:bg-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 
-    dark:focus:border-indigo-400 dark:focus:ring-indigo-400 transition-all duration-200
-    placeholder:text-gray-400 dark:placeholder:text-gray-500`;
+    bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+    focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 
+    dark:focus:border-indigo-400 dark:focus:ring-indigo-400 
+    placeholder:text-gray-400 dark:placeholder:text-gray-500
+    transition-all duration-200`;
 
   return (
     <motion.div
@@ -267,14 +283,27 @@ export default function EventForm({
                 <input
                   type="text"
                   value={formData.guests.join(", ")}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      guests: e.target.value.split(",").map((s) => s.trim()),
-                    })
-                  }
+                  onChange={(e) => {
+                    const input = e.target.value;
+
+                    if (input.includes(",")) {
+                      const guestList = input
+                        .split(",")
+                        .map((name) => name.trim())
+                        .filter((name) => name.length > 0);
+                      setFormData({
+                        ...formData,
+                        guests: guestList,
+                      });
+                    } else {
+                      setFormData({
+                        ...formData,
+                        guests: input ? [input] : [],
+                      });
+                    }
+                  }}
                   className={inputClasses}
-                  placeholder="Enter guest names separated by commas"
+                  placeholder="Enter guest names separated by commas (e.g., John Doe, Jane Smith)"
                 />
               </div>
             </div>

@@ -4,6 +4,7 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 import SessionProvider from "./providers/SessionProvider";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "./providers/theme-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,12 +19,19 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
-        <SessionProvider session={session}>
-          {children}
-          <Toaster position="top-right" />
-        </SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider session={session}>
+            {children}
+            <Toaster position="top-right" />
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -150,20 +150,46 @@ const EventsSlider = () => {
     setCurrentSlide((prev) => (prev - 1 + events.length) % events.length);
   };
 
-  const getStatusBadge = (status: Event["status"]) => {
+  const getStatusBadge = (event: Event) => {
+    const now = new Date().getTime();
+    const eventDate = new Date(event.date).getTime();
+
+    // Calculate status dynamically
+    let status: Event["status"];
+    if (event.status === "cancelled") {
+      status = "cancelled";
+    } else if (now > eventDate + 24 * 60 * 60 * 1000) {
+      // 24 hours after event
+      status = "completed";
+    } else if (now >= eventDate && now <= eventDate + 24 * 60 * 60 * 1000) {
+      // During event
+      status = "ongoing";
+    } else {
+      status = "upcoming";
+    }
+
     const badges = {
-      upcoming:
-        "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-      ongoing:
-        "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-      completed:
-        "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
-      cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+      upcoming: `bg-gradient-to-r from-emerald-500/10 to-green-500/10 
+        text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 
+        dark:border-emerald-400/20`,
+
+      ongoing: `bg-gradient-to-r from-blue-500/10 to-indigo-500/10 
+        text-blue-700 dark:text-blue-400 border border-blue-500/20 
+        dark:border-blue-400/20`,
+
+      completed: `bg-gradient-to-r from-gray-500/10 to-slate-500/10 
+        text-gray-700 dark:text-gray-400 border border-gray-500/20 
+        dark:border-gray-400/20`,
+
+      cancelled: `bg-gradient-to-r from-red-500/10 to-rose-500/10 
+        text-red-700 dark:text-red-400 border border-red-500/20 
+        dark:border-red-400/20`,
     };
 
     return (
       <span
-        className={`px-3 py-1 rounded-full text-sm font-medium ${badges[status]}`}
+        className={`px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm 
+          shadow-sm ${badges[status]}`}
       >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
@@ -227,7 +253,7 @@ const EventsSlider = () => {
                       className="object-cover"
                     />
                     <div className="absolute top-4 right-4">
-                      {getStatusBadge(event.status)}
+                      {getStatusBadge(event)}
                     </div>
                     {event.status === "upcoming" && (
                       <div className="absolute bottom-4 left-4 bg-black/70 rounded-lg p-3 text-white">

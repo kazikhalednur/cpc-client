@@ -1,14 +1,17 @@
 export interface Contest {
   id: string;
   title: string;
-  image: string;
-  date: string;
-  participants: number;
-  difficulty: "Easy" | "Medium" | "Hard";
-  status: "Upcoming" | "Ongoing" | "Completed";
-  platform: string;
-  prize: string;
   description: string;
+  startTime: string;
+  endTime: string;
+  platform: string;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  prize: string;
+  image: string;
+  status: string;
+  participants: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ContestDifficulty {

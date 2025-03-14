@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { FiBell, FiMenu, FiX } from "react-icons/fi";
+import { FiBell, FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
+import { useTheme } from "next-themes";
 
 export const DashboardHeader = () => {
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch by only rendering theme toggle after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm">
@@ -21,8 +33,25 @@ export const DashboardHeader = () => {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+          <div className="flex items-center gap-4">
+            {/* Theme Toggle Button */}
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 
+                  focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === "dark" ? (
+                  <FiSun className="h-6 w-6" />
+                ) : (
+                  <FiMoon className="h-6 w-6" />
+                )}
+              </button>
+            )}
+
+            {/* Existing Notification Button */}
+            <button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
               <FiBell className="h-6 w-6" />
             </button>
 
