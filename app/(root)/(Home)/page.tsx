@@ -237,19 +237,19 @@ export default function Home() {
               </p>
               <div className="flex gap-4">
                 <SocialIcon
-                  href="https://github.com"
+                  href="https://github.com/cpcdiu"
                   icon={<FaGithub size={20} />}
                 />
                 <SocialIcon
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/company/diu-cpc/"
                   icon={<FaLinkedinIn size={20} />}
                 />
-                <SocialIcon
+                {/* <SocialIcon
                   href="https://discord.com"
                   icon={<FaDiscord size={20} />}
-                />
+                /> */}
                 <SocialIcon
-                  href="mailto:contact@cpc.com"
+                  href="mailto:cpc@diu.edu.bd"
                   icon={<FiMail size={20} />}
                 />
               </div>
@@ -332,10 +332,10 @@ export default function Home() {
               <h3 className="text-xl font-bold">Contact</h3>
               <ul className="space-y-2">
                 <li className="text-gray-300 dark:text-gray-400">
-                  Email: cpc@example.com
+                  Email: cpc@diu.edu.bd
                 </li>
                 <li className="text-gray-300 dark:text-gray-400">
-                  Location: Room 501, CS Building
+                  Location: Room 311, Knowledge Tower
                 </li>
                 <li>
                   <a href="/contact" className="text-gray-400 hover:text-white">
