@@ -1,21 +1,130 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { useGoogleSignupMutation } from "@/lib/api/googleAuthApi";
+import { useAuth } from "@/lib/auth/AuthContext";
+import toast from "react-hot-toast";
 
 import CPCLogo from "../../../assets/images/CPC-Logo.png";
 
+
 export default function SignUp() {
+  const router = useRouter();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [studentId, setStudentId] = useState("");
+  const [googleSignup, { isLoading: isGoogleSignupLoading }] = useGoogleSignupMutation();
+  const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  const handleGoogleSignUp = async () => {
+  // Restore student ID from localStorage and handle Google OAuth callback
+  useEffect(() => {
+    const savedStudentId = localStorage.getItem('pending_student_id');
+    if (savedStudentId) {
+      setStudentId(savedStudentId);
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code && (studentId || savedStudentId)) {
+      handleGoogleCallback(code);
+    }
+  }, [studentId]);
+
+  const handleGoogleCallback = async (code: string) => {
     try {
       setIsLoading(true);
-      await signIn("google", { callbackUrl: "/dashboard" });
+      const currentStudentId = studentId || localStorage.getItem('pending_student_id') || '';
+
+      if (!currentStudentId.trim()) {
+        toast.error('Student ID is required for signup');
+        return;
+      }
+
+      console.log('Attempting Google signup with:', { code: code.substring(0, 20) + '...', student_id: currentStudentId });
+
+      const result = await googleSignup({
+        code,
+        student_id: currentStudentId,
+      }).unwrap();
+
+      console.log('Google signup result:', result);
+
+      if (result.success) {
+        // Use auth context to store tokens
+        login({
+          access: result.data.access,
+          refresh: result.data.refresh,
+        });
+
+        // Clean up pending student ID
+        localStorage.removeItem('pending_student_id');
+
+        toast.success('Account created successfully!');
+        router.push('/');
+      } else {
+        toast.error(result.message || 'Signup failed');
+      }
+    } catch (error: any) {
+      console.error('Google signup error details:', {
+        error,
+        message: error?.message,
+        data: error?.data,
+        status: error?.status,
+        originalStatus: error?.originalStatus
+      });
+
+      let errorMessage = 'Signup failed. Please try again.';
+
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.status) {
+        errorMessage = `Server error (${error.status}). Please try again.`;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    if (!studentId.trim()) {
+      toast.error('Please enter your Student ID first');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      // Store student ID for callback
+      localStorage.setItem('pending_student_id', studentId);
+
+      // Generate redirect URI on client side
+      const redirectUri = `${window.location.origin}/auth/signup`;
+
+      const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
+
+      const options = {
+        client_id: CLIENT_ID,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        scope: 'openid email profile',
+        access_type: 'offline',
+        prompt: 'consent',
+      }
+
+      const qs = new URLSearchParams(options).toString()
+      localStorage.setItem('qs', qs)
+      window.location.href = `${googleAuthUrl}?${qs}`
+    } catch (error) {
+      console.error('Error initiating Google signup:', error);
+      toast.error('Failed to initiate Google signup');
     } finally {
       setIsLoading(false);
     }
@@ -56,20 +165,19 @@ export default function SignUp() {
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-200"
-              placeholder="222-15-6390"
             />
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignUp}
-            disabled={isLoading}
+            disabled={isLoading || isGoogleSignupLoading}
             className="group relative w-full flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 text-sm font-medium rounded-md bg-white text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-50"
           >
-            {isLoading ? (
+            {isLoading || isGoogleSignupLoading ? (
               <span className="flex items-center">
                 <LoadingSpinner />
-                Redirecting to Google...
+                {isGoogleSignupLoading ? 'Creating account...' : 'Redirecting to Google...'}
               </span>
             ) : (
               <>

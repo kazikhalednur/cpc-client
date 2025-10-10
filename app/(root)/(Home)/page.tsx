@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react";
 import { Navigation } from "@/app/components/Navigation";
 import FeaturedContests from "./_views/FeaturedContests";
 import EventsSlider from "./_views/EventsSlider";
-import HeroSection from "@/app/dashboard/contests/_components/HeroSection";
+import HeroSection from "./_views/HeroSection";
 
 export default function Home() {
   return (
@@ -175,6 +175,7 @@ export default function Home() {
                     alt={post.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    suppressHydrationWarning
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-900/50 to-transparent" />
                 </div>

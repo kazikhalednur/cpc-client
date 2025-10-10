@@ -3,13 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSession, signOut } from "next-auth/react";
+import { useAuth } from "@/lib/auth/AuthContext";
 import {
   FiMenu,
   FiX,
   FiLogOut,
-  FiUser,
-  FiSettings,
   FiMoon,
   FiSun,
 } from "react-icons/fi";
@@ -18,10 +16,9 @@ import { Role } from "@/types/role";
 import { useTheme } from "next-themes";
 
 export const Navigation = () => {
-  const { data: session, status } = useSession();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -54,30 +51,20 @@ export const Navigation = () => {
     { label: "Contests", href: "/contests" },
     { label: "Resources", href: "/resources" },
     { label: "Verify Certificate", href: "/verify" },
-    ...(session?.user?.role === Role.ADMIN ||
-    session?.user?.role === Role.SUPER_ADMIN
+    ...(isAuthenticated && (user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN)
       ? [{ label: "Dashboard", href: "/dashboard" }]
       : []),
   ];
 
-  const userMenuItems = [
-    { label: "Profile", href: "/profile", icon: FiUser },
-    { label: "Settings", href: "/settings", icon: FiSettings },
-    {
-      label: "Sign out",
-      onClick: () => signOut(),
-      icon: FiLogOut,
-      className:
-        "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300",
-    },
-  ];
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300
-      ${
-        isScrolled ? "bg-white/80 backdrop-blur-md shadow-md" : "bg-transparent"
-      }`}
+      ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-md" : "bg-transparent"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
@@ -90,6 +77,7 @@ export const Navigation = () => {
                 width={40}
                 height={40}
                 className="h-8 w-auto transition-transform duration-300 group-hover:scale-105"
+                suppressHydrationWarning
               />
             </Link>
           </div>
@@ -101,11 +89,10 @@ export const Navigation = () => {
                 key={item.href}
                 href={item.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
-                         ${
-                           isScrolled
-                             ? "text-gray-800 hover:text-gray-900 hover:bg-gray-100"
-                             : "text-white hover:text-white/90 hover:bg-white/10"
-                         }`}
+                         ${isScrolled
+                    ? "text-gray-800 hover:text-gray-900 hover:bg-gray-100"
+                    : "text-white hover:text-white/90 hover:bg-white/10"
+                  }`}
               >
                 {item.label}
               </Link>
@@ -116,11 +103,10 @@ export const Navigation = () => {
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className={`p-2 rounded-full transition-all duration-200
-                         ${
-                           isScrolled
-                             ? "text-gray-800 hover:bg-gray-100"
-                             : "text-white hover:bg-white/10"
-                         }`}
+                         ${isScrolled
+                    ? "text-gray-800 hover:bg-gray-100"
+                    : "text-white hover:bg-white/10"
+                  }`}
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (
@@ -132,57 +118,16 @@ export const Navigation = () => {
             )}
 
             {/* Auth Section */}
-            {session ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center space-x-2 focus:outline-none"
-                >
-                  <div
-                    className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 
-                               flex items-center justify-center text-white font-medium"
-                  >
-                    {getInitials(session.user?.name)}
-                  </div>
-                </button>
-
-                {isProfileOpen && (
-                  <div
-                    className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white 
-                               ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  >
-                    <div className="py-1">
-                      {userMenuItems.map((item) =>
-                        item.href ? (
-                          <Link
-                            key={item.label}
-                            href={item.href}
-                            className={`flex items-center px-4 py-2 text-sm text-gray-700 
-                                     hover:bg-gray-100 ${item.className || ""}`}
-                            onClick={() => setIsProfileOpen(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Link>
-                        ) : (
-                          <button
-                            key={item.label}
-                            onClick={() => {
-                              item.onClick?.();
-                              setIsProfileOpen(false);
-                            }}
-                            className={`w-full flex items-center px-4 py-2 text-sm text-gray-700 
-                                     hover:bg-gray-100 ${item.className || ""}`}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </button>
-                        )
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-full 
+                         hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-md 
+                         hover:shadow-lg hover:shadow-red-500/25 flex items-center space-x-2"
+              >
+                <FiLogOut className="w-4 h-4" />
+                Logout
+              </button>
             ) : (
               <Link
                 href="/auth/signin"
@@ -200,11 +145,10 @@ export const Navigation = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-2 rounded-md transition-all duration-200
-                       ${
-                         isScrolled
-                           ? "text-gray-800 hover:bg-gray-100"
-                           : "text-white hover:bg-white/10"
-                       }`}
+                       ${isScrolled
+                  ? "text-gray-800 hover:bg-gray-100"
+                  : "text-white hover:bg-white/10"
+                }`}
             >
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
@@ -249,34 +193,18 @@ export const Navigation = () => {
               </button>
             )}
 
-            {session ? (
-              <>
-                {userMenuItems.map((item) =>
-                  item.href ? (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 
-                               hover:text-gray-900 hover:bg-gray-100"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <button
-                      key={item.label}
-                      onClick={() => {
-                        item.onClick?.();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 
-                               hover:text-red-700 hover:bg-gray-100"
-                    >
-                      {item.label}
-                    </button>
-                  )
-                )}
-              </>
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 
+                         hover:text-red-700 hover:bg-gray-100 flex items-center space-x-2"
+              >
+                <FiLogOut className="w-4 h-4" />
+                Logout
+              </button>
             ) : (
               <Link
                 href="/auth/signin"

@@ -1,18 +1,101 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import CPCLogo from "../../../assets/images/CPC-Logo.png";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { useGoogleLoginMutation } from "@/lib/api/googleAuthApi";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
+  const router = useRouter();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [googleLogin, { isLoading: isGoogleLoginLoading }] = useGoogleLoginMutation();
+  const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+  // Handle Google OAuth callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+      handleGoogleCallback(code);
+    }
+  }, []);
+
+  const handleGoogleCallback = async (code: string) => {
+    try {
+      setIsLoading(true);
+
+      console.log('Attempting Google login with code:', code.substring(0, 20) + '...');
+
+      const result = await googleLogin({
+        code,
+      }).unwrap();
+
+      console.log('Google login result:', result);
+
+      if (result.success) {
+        login({
+          access: result.data.access,
+          refresh: result.data.refresh,
+        });
+
+        toast.success('Login successful!');
+        router.push('/');
+      } else {
+        toast.error(result.message || 'Login failed');
+      }
+    } catch (error: any) {
+      console.error('Google login error details:', {
+        error,
+        message: error?.message,
+        data: error?.data,
+        status: error?.status,
+        originalStatus: error?.originalStatus
+      });
+
+      let errorMessage = 'Login failed. Please try again.';
+
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.status) {
+        errorMessage = `Server error (${error.status}). Please try again.`;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      await signIn("google", { callbackUrl: "/dashboard" });
+
+      // Redirect to Google OAuth
+      const redirectUri = `${window.location.origin}/auth/signin`;
+      const scope = 'openid email profile';
+
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${CLIENT_ID}&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `response_type=code&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `access_type=offline&` +
+        `prompt=consent`;
+
+      window.location.href = googleAuthUrl;
+    } catch (error) {
+      console.error('Error initiating Google login:', error);
+      toast.error('Failed to initiate Google login');
     } finally {
       setIsLoading(false);
     }
@@ -41,13 +124,13 @@ export default function SignIn() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoginLoading}
             className="group relative w-full flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 text-sm font-medium rounded-md bg-white text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-50"
           >
-            {isLoading ? (
+            {isLoading || isGoogleLoginLoading ? (
               <span className="flex items-center">
                 <LoadingSpinner />
-                Redirecting to Google...
+                {isGoogleLoginLoading ? 'Logging in...' : 'Redirecting to Google...'}
               </span>
             ) : (
               <>

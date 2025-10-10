@@ -251,6 +251,7 @@ const EventsSlider = () => {
                       alt={event.title}
                       fill
                       className="object-cover"
+                      suppressHydrationWarning
                     />
                     <div className="absolute top-4 right-4">
                       {getStatusBadge(event)}
@@ -304,11 +305,10 @@ const EventsSlider = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentSlide
-                  ? "bg-indigo-600 dark:bg-indigo-400"
-                  : "bg-gray-300 dark:bg-gray-600"
-              }`}
+              className={`w-2 h-2 rounded-full transition-colors ${index === currentSlide
+                ? "bg-indigo-600 dark:bg-indigo-400"
+                : "bg-gray-300 dark:bg-gray-600"
+                }`}
             />
           ))}
         </div>

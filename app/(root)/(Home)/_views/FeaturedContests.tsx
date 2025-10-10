@@ -207,40 +207,35 @@ const FeaturedContests = () => {
                             alt={contest.title}
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            suppressHydrationWarning
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute top-4 right-4 flex gap-2">
                             <span
                               className={`px-3 py-1 rounded-full text-sm font-medium 
-                            ${
-                              contest.difficulty === "Easy" &&
-                              "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                            }
-                            ${
-                              contest.difficulty === "Medium" &&
-                              "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                            }
-                            ${
-                              contest.difficulty === "Hard" &&
-                              "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                            }`}
+                            ${contest.difficulty === "Easy" &&
+                                "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                }
+                            ${contest.difficulty === "Medium" &&
+                                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                }
+                            ${contest.difficulty === "Hard" &&
+                                "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                                }`}
                             >
                               {contest.difficulty}
                             </span>
                             <span
                               className={`px-3 py-1 rounded-full text-sm font-medium 
-                            ${
-                              contest.status === "Upcoming" &&
-                              "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                            }
-                            ${
-                              contest.status === "Ongoing" &&
-                              "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                            }
-                            ${
-                              contest.status === "Completed" &&
-                              "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
-                            }`}
+                            ${contest.status === "Upcoming" &&
+                                "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                                }
+                            ${contest.status === "Ongoing" &&
+                                "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                }
+                            ${contest.status === "Completed" &&
+                                "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+                                }`}
                             >
                               {contest.status}
                             </span>
@@ -302,11 +297,10 @@ const FeaturedContests = () => {
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentSlide
+                className={`w-2 h-2 rounded-full transition-colors ${index === currentSlide
                     ? "bg-indigo-600 dark:bg-indigo-400"
                     : "bg-gray-300 dark:bg-gray-600"
-                }`}
+                  }`}
               />
             )
           )}

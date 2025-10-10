@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { useRole } from "@/hooks/useRole";
 import { Role } from "@/types/role";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { AuthGuard } from "@/lib/auth/AuthGuard";
 import {
   FiUsers,
   FiCalendar,
@@ -92,101 +94,103 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">
-        <h1 className="text-3xl font-bold mb-2">
-          Welcome back, {session?.user?.name}!
-        </h1>
-        <p className="text-indigo-100">
-          Here's what's happening in your dashboard today.
-        </p>
-      </div>
+    <AuthGuard requireAuth={true}>
+      <div className="space-y-8">
+        {/* Welcome Section */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">
+          <h1 className="text-3xl font-bold mb-2">
+            Welcome back, {session?.user?.name}!
+          </h1>
+          <p className="text-indigo-100">
+            Here's what's happening in your dashboard today.
+          </p>
+        </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Users Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <FiUsers className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Users Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <FiUsers className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Users
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {isStatsLoading ? (
+                    <LoadingSpinner className="h-6 w-6" />
+                  ) : (
+                    stats?.totalUsers || 0
+                  )}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Total Users
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {isStatsLoading ? (
-                  <LoadingSpinner className="h-6 w-6" />
-                ) : (
-                  stats?.totalUsers || 0
-                )}
-              </p>
+          </div>
+
+          {/* Events Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+                <FiCalendar className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Events
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {isStatsLoading ? (
+                    <LoadingSpinner className="h-6 w-6" />
+                  ) : (
+                    stats?.totalEvents || 0
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Contests Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <FiAward className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Contests
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {isStatsLoading ? (
+                    <LoadingSpinner className="h-6 w-6" />
+                  ) : (
+                    stats?.totalContests || 0
+                  )}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Events Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-              <FiCalendar className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Total Events
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {isStatsLoading ? (
-                  <LoadingSpinner className="h-6 w-6" />
-                ) : (
-                  stats?.totalEvents || 0
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Contests Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-              <FiAward className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Total Contests
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {isStatsLoading ? (
-                  <LoadingSpinner className="h-6 w-6" />
-                ) : (
-                  stats?.totalContests || 0
-                )}
-              </p>
-            </div>
+        {/* Quick Actions */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {quickActions.map((action) => (
+              <Link
+                key={action.title}
+                href={action.href}
+                className={`flex items-center gap-3 p-4 rounded-lg ${action.bgColor} ${action.textColor} ${action.hoverBg} transition-colors`}
+              >
+                <action.icon className="h-5 w-5" />
+                <span>{action.title}</span>
+              </Link>
+            ))}
           </div>
         </div>
       </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {quickActions.map((action) => (
-            <Link
-              key={action.title}
-              href={action.href}
-              className={`flex items-center gap-3 p-4 rounded-lg ${action.bgColor} ${action.textColor} ${action.hoverBg} transition-colors`}
-            >
-              <action.icon className="h-5 w-5" />
-              <span>{action.title}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
+    </AuthGuard>
   );
 }

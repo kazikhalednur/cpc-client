@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import SessionProvider from "./providers/SessionProvider";
+import { ReduxProvider } from "./providers/ReduxProvider";
+import { AuthProvider } from "@/lib/auth/AuthContext";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -28,10 +30,14 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          <SessionProvider session={session}>
-            {children}
-            <Toaster position="top-right" />
-          </SessionProvider>
+          <ReduxProvider>
+            <AuthProvider>
+              <SessionProvider session={session}>
+                {children}
+                <Toaster position="top-right" />
+              </SessionProvider>
+            </AuthProvider>
+          </ReduxProvider>
         </ThemeProvider>
       </body>
     </html>
