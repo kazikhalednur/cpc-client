@@ -14,7 +14,8 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 import { LoadingSpinner } from "@/app/components/LoadingSpinner";
-import { EventData } from "@/types/event";
+import { Event } from "@/types/event";
+import { eventApi } from "@/lib/api/eventApi";
 import Countdown from "react-countdown";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -23,8 +24,9 @@ import { useParams } from "next/navigation";
 export default function EventDetailsPage() {
   const params = useParams();
   const eventId = params?.eventId as string;
-  const [event, setEvent] = useState<EventData | null>(null);
+  const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
@@ -32,13 +34,15 @@ export default function EventDetailsPage() {
       if (!eventId) return;
 
       try {
-        const res = await fetch(`/api/events/${eventId}`);
-        if (!res.ok) throw new Error("Failed to fetch event");
-        const data = await res.json();
+        setIsLoading(true);
+        setError(null);
+        const data = await eventApi.getEventById(eventId);
         setEvent(data);
       } catch (error) {
         console.error("Failed to fetch event:", error);
+        setError(error instanceof Error ? error.message : "Failed to load event");
         toast.error("Failed to load event");
+        setEvent(null);
       } finally {
         setIsLoading(false);
       }
@@ -51,7 +55,7 @@ export default function EventDetailsPage() {
     try {
       await navigator.share({
         title: event?.title,
-        text: event?.shortDescription,
+        text: event?.short_description,
         url: window.location.href,
       });
     } catch (error) {
@@ -61,6 +65,12 @@ export default function EventDetailsPage() {
   };
 
   const handleRegister = async () => {
+    if (event?.registration_link) {
+      // Open registration link in new tab
+      window.open(event.registration_link, '_blank');
+      return;
+    }
+
     setIsRegistering(true);
     try {
       // Add registration logic here
@@ -77,6 +87,22 @@ export default function EventDetailsPage() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <LoadingSpinner className="h-8 w-8" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
@@ -118,10 +144,9 @@ export default function EventDetailsPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm 
-              ${
-                event.status === "UPCOMING"
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                  : event.status === "ONGOING"
+              ${event.status === "UPCOMING"
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                : event.status === "ONGOING"
                   ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
                   : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
               }`}
@@ -142,17 +167,17 @@ export default function EventDetailsPage() {
                 {event.title}
               </h1>
               <p className="text-base text-gray-200 mb-4">
-                {event.shortDescription}
+                {event.short_description}
               </p>
               <div className="flex flex-wrap gap-4 text-sm text-white">
                 <div className="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
                   <FiCalendar className="w-4 h-4 text-indigo-300" />
-                  <span>{new Date(event.eventDate).toLocaleDateString()}</span>
+                  <span>{new Date(event.event_date).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
                   <FiClock className="w-4 h-4 text-indigo-300" />
                   <span>
-                    {new Date(event.eventDate).toLocaleTimeString([], {
+                    {new Date(event.event_date).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -196,42 +221,76 @@ export default function EventDetailsPage() {
                 Featured Speakers
               </h2>
               <div className="space-y-6">
-                {/* Keynote Speaker */}
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/10">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xl font-bold text-white">
-                    {event.keynoteSpeaker[0]}
-                  </div>
-                  <div>
+                {/* Speakers */}
+                {event.speakers.length > 0 && (
+                  <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {event.keynoteSpeaker}
+                      Speakers
                     </h3>
-                    <p className="text-indigo-600 dark:text-indigo-400">
-                      Keynote Speaker
-                    </p>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {event.speakers.map((speaker) => (
+                        <div
+                          key={speaker.id}
+                          className="flex items-start gap-4 p-4 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/10"
+                        >
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white">
+                            {speaker.name[0]}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">
+                              {speaker.name}
+                            </h4>
+                            <p className="text-indigo-600 dark:text-indigo-400 text-sm">
+                              {speaker.designation}
+                            </p>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm">
+                              {speaker.organization}, {speaker.country}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Guest Speakers */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  {event.guests.map((guest: string, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700/30"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-lg font-bold text-white">
-                        {guest[0]}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {guest}
-                        </h3>
-                        <p className="text-blue-600 dark:text-blue-400">
-                          Guest Speaker
-                        </p>
-                      </div>
+                {event.guests.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Guest Speakers
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {event.guests.map((guest) => (
+                        <div
+                          key={guest.id}
+                          className="flex items-start gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700/30"
+                        >
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-lg font-bold text-white">
+                            {guest.name[0]}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">
+                              {guest.name}
+                            </h4>
+                            <p className="text-blue-600 dark:text-blue-400 text-sm">
+                              {guest.designation}
+                            </p>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm">
+                              {guest.organization}, {guest.country}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
+
+                {/* No speakers message */}
+                {event.speakers.length === 0 && event.guests.length === 0 && (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                    Speaker information will be announced soon.
+                  </p>
+                )}
               </div>
             </motion.div>
           </div>
@@ -249,7 +308,7 @@ export default function EventDetailsPage() {
                     Event starts in
                   </p>
                   <Countdown
-                    date={new Date(event.eventDate)}
+                    date={new Date(event.event_date)}
                     className="text-2xl font-bold text-indigo-600 dark:text-indigo-400"
                   />
                 </div>
@@ -259,10 +318,9 @@ export default function EventDetailsPage() {
                 onClick={handleRegister}
                 disabled={isRegistering || event.status !== "UPCOMING"}
                 className={`w-full rounded-lg px-6 py-3 font-medium transition-all duration-200 
-                  ${
-                    event.status === "UPCOMING"
-                      ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/25"
-                      : "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500"
+                  ${event.status === "UPCOMING"
+                    ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/25"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500"
                   }`}
               >
                 {isRegistering ? (
@@ -283,7 +341,7 @@ export default function EventDetailsPage() {
                   <FiCalendar className="w-4 h-4" />
                   <span>
                     Registration closes on{" "}
-                    {new Date(event.registrationDeadline).toLocaleDateString()}
+                    {new Date(event.registration_deadline).toLocaleDateString()}
                   </span>
                 </div>
               </div>

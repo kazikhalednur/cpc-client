@@ -1,49 +1,29 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+
+const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "http://127.0.0.1:8000";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const status = searchParams.get("status");
-    const search = searchParams.get("search");
 
-    const where: Prisma.EventWhereInput = {
-      ...(status && { status: status as "UPCOMING" | "ONGOING" | "COMPLETED" }),
-      ...(search && {
-        OR: [
-          {
-            title: {
-              contains: search,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-          {
-            shortDescription: {
-              contains: search,
-              mode: "insensitive" as Prisma.QueryMode,
-            },
-          },
-        ],
-      }),
-    };
-
-    const events = await prisma.event.findMany({
-      where,
-      orderBy: { eventDate: "asc" },
+    // Forward the request to the backend API
+    const backendUrl = `${BACKEND_BASE_URL}/events/`;
+    const response = await fetch(backendUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
     });
 
-    // Add default image for events without images
-    const eventsWithImages = events.map((event) => ({
-      ...event,
-      image:
-        event.image ||
-        "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4",
-    }));
+    if (!response.ok) {
+      throw new Error(`Backend API error: ${response.status}`);
+    }
 
-    return NextResponse.json(eventsWithImages);
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Failed to fetch events:", error);
+    console.error("Failed to fetch events from backend:", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
