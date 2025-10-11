@@ -5,18 +5,19 @@ import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
 import { FiCalendar, FiClock, FiTag, FiArrowLeft, FiSearch, FiFilter, FiLoader } from "react-icons/fi";
 import Link from "next/link";
-import { Notice, NoticeFilters } from "@/types/notice";
+import { Notice, NoticeFilters, NoticeCategory } from "@/types/notice";
 import { noticeApi } from "@/lib/api/noticeApi";
+import { useDebounce } from "@/hooks/useDebounce";
 
 
-const categoryColors = {
+const categoryColors: { [key: string]: string } = {
     announcement: "bg-blue-100 text-blue-800 border-blue-200",
     event: "bg-green-100 text-green-800 border-green-200",
     achievement: "bg-yellow-100 text-yellow-800 border-yellow-200",
     general: "bg-gray-100 text-gray-800 border-gray-200",
 };
 
-const priorityColors = {
+const priorityColors: { [key: string]: string } = {
     high: "bg-red-100 text-red-800 border-red-200",
     medium: "bg-orange-100 text-orange-800 border-orange-200",
     low: "bg-gray-100 text-gray-800 border-gray-200",
@@ -24,23 +25,41 @@ const priorityColors = {
 
 export default function NoticesPage() {
     const [notices, setNotices] = useState<Notice[]>([]);
+    const [categories, setCategories] = useState<NoticeCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [selectedPriority, setSelectedPriority] = useState<string>("all");
 
-    // Load notices on component mount
+    // Debounce search term to avoid too many API calls
+    const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+    // Load categories on component mount
     useEffect(() => {
-        loadNotices();
+        loadCategories();
     }, []);
 
-    // Filter notices when search/filter parameters change
+    // Load notices on component mount and when filters change
     useEffect(() => {
-        if (notices.length > 0) {
-            loadNotices();
+        loadNotices();
+    }, [debouncedSearchTerm, selectedCategory, selectedPriority]);
+
+    const loadCategories = async () => {
+        try {
+            const response = await noticeApi.getCategories();
+            setCategories(response.data);
+        } catch (err) {
+            console.error("Error loading categories:", err);
+            // Fallback to default categories if API fails
+            setCategories([
+                { title: "Announcements" },
+                { title: "Events" },
+                { title: "Achievements" },
+                { title: "General" }
+            ]);
         }
-    }, [searchTerm, selectedCategory, selectedPriority]);
+    };
 
     const loadNotices = async () => {
         try {
@@ -48,13 +67,13 @@ export default function NoticesPage() {
             setError(null);
 
             const filters: Partial<NoticeFilters> = {
-                searchTerm: searchTerm || undefined,
+                searchTerm: debouncedSearchTerm || undefined,
                 category: selectedCategory !== "all" ? selectedCategory : undefined,
                 priority: selectedPriority !== "all" ? selectedPriority : undefined,
             };
 
             const response = await noticeApi.getNotices(filters);
-            setNotices(response.data);
+            setNotices(response.data.results);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to load notices");
             console.error("Error loading notices:", err);
@@ -78,6 +97,35 @@ export default function NoticesPage() {
             hour: "2-digit",
             minute: "2-digit",
         });
+    };
+
+    const getCategoryDisplayName = (category: string | undefined) => {
+        if (!category) return 'General'; // Default to General if category is undefined/null
+
+        // Create a dynamic mapping based on available categories
+        const categoryMap: { [key: string]: string } = {
+            'Announcements': 'Announcement',
+            'Events': 'Event',
+            'Achievements': 'Achievement',
+            'General': 'General'
+        };
+        return categoryMap[category] || category;
+    };
+
+    const getCategoryKey = (categoryTitle: string) => {
+        // Convert category title to lowercase key for color mapping
+        return categoryTitle.toLowerCase().replace('s$', ''); // Remove trailing 's'
+    };
+
+    const getPriorityDisplayName = (priority: string | undefined) => {
+        if (!priority) return 'low'; // Default to low if priority is undefined/null
+
+        const priorityMap: { [key: string]: string } = {
+            'HIGH': 'high',
+            'MEDIUM': 'medium',
+            'LOW': 'low'
+        };
+        return priorityMap[priority] || priority.toLowerCase();
     };
 
     return (
@@ -131,10 +179,11 @@ export default function NoticesPage() {
                        focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         >
                             <option value="all">All Categories</option>
-                            <option value="announcement">Announcements</option>
-                            <option value="event">Events</option>
-                            <option value="achievement">Achievements</option>
-                            <option value="general">General</option>
+                            {categories.map((category) => (
+                                <option key={category.title} value={getCategoryKey(category.title)}>
+                                    {category.title}
+                                </option>
+                            ))}
                         </select>
 
                         {/* Priority Filter */}
@@ -192,31 +241,33 @@ export default function NoticesPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.1 }}
-                                    className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg border-l-4 ${notice.priority === "high" ? "border-red-500" :
-                                        notice.priority === "medium" ? "border-orange-500" : "border-gray-300"
-                                        } ${notice.isPinned ? "ring-2 ring-indigo-200 dark:ring-indigo-800" : ""}`}
+                                    className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg border-l-4 ${notice.priority === "HIGH" ? "border-red-500" :
+                                        notice.priority === "MEDIUM" ? "border-orange-500" : "border-gray-300"
+                                        } ${notice.is_pinned ? "ring-2 ring-indigo-200 dark:ring-indigo-800" : ""}`}
                                 >
                                     <div className="p-6">
                                         {/* Header */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    {notice.isPinned && (
+                                                    {notice.is_pinned && (
                                                         <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 
                                          text-xs font-medium rounded-full">
                                                             📌 Pinned
                                                         </span>
                                                     )}
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${categoryColors[notice.category]}`}>
-                                                        {notice.category.charAt(0).toUpperCase() + notice.category.slice(1)}
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${categoryColors[getCategoryDisplayName(notice.category)]}`}>
+                                                        {getCategoryDisplayName(notice.category)}
                                                     </span>
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${priorityColors[notice.priority]}`}>
-                                                        {notice.priority.charAt(0).toUpperCase() + notice.priority.slice(1)} Priority
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${priorityColors[getPriorityDisplayName(notice.priority)]}`}>
+                                                        {getPriorityDisplayName(notice.priority).charAt(0).toUpperCase() + getPriorityDisplayName(notice.priority).slice(1)} Priority
                                                     </span>
                                                 </div>
-                                                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                                    {notice.title}
-                                                </h2>
+                                                <Link href={`/notices/${notice.id}`}>
+                                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer">
+                                                        {notice.title}
+                                                    </h2>
+                                                </Link>
                                             </div>
                                         </div>
 
@@ -226,31 +277,39 @@ export default function NoticesPage() {
                                         </p>
 
                                         {/* Tags */}
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            {notice.tags.map((tag, tagIndex) => (
-                                                <span
-                                                    key={tagIndex}
-                                                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
-                                 text-xs rounded-full"
-                                                >
-                                                    #{tag}
-                                                </span>
-                                            ))}
-                                        </div>
+                                        {notice.tags && Array.isArray(notice.tags) && notice.tags.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                {notice.tags.map((tag, tagIndex) => (
+                                                    <span
+                                                        key={tagIndex}
+                                                        className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
+                                         text-xs rounded-full"
+                                                    >
+                                                        #{tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
 
                                         {/* Footer */}
                                         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                                             <div className="flex items-center gap-4">
                                                 <div className="flex items-center gap-1">
                                                     <FiCalendar className="w-4 h-4" />
-                                                    <span>{formatDate(notice.publishedAt)}</span>
+                                                    <span>{formatDate(notice.published_at)}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     <FiClock className="w-4 h-4" />
-                                                    <span>{formatTime(notice.publishedAt)}</span>
+                                                    <span>{formatTime(notice.published_at)}</span>
                                                 </div>
-                                                <span>By {notice.author}</span>
+                                                <span>By CPC Admin</span>
                                             </div>
+                                            <Link
+                                                href={`/notices/${notice.id}`}
+                                                className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors"
+                                            >
+                                                Read More
+                                            </Link>
                                         </div>
                                     </div>
                                 </motion.article>
@@ -277,3 +336,4 @@ export default function NoticesPage() {
         </div>
     );
 }
+
