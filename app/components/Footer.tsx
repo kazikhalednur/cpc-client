@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
     FiMail,
     FiPhone,
@@ -18,7 +18,11 @@ import {
 import CPCLogo from "@/assets/images/CPC-Logo.png";
 
 export function Footer() {
-    const currentYear = new Date().getFullYear();
+    const [currentYear, setCurrentYear] = useState(2024);
+
+    useEffect(() => {
+        setCurrentYear(new Date().getFullYear());
+    }, []);
 
     const quickLinks = [
         { name: "Home", href: "/" },
@@ -68,20 +72,18 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="mb-6"
-                        >
+                        <div className="mb-6">
                             <Link href="/" className="flex items-center space-x-3 mb-4">
-                                <div className="relative w-12 h-12">
+                                <div className="relative w-12 h-12 pt-4">
                                     <Image
                                         src={CPCLogo}
                                         alt="DIU CPC Logo"
-                                        fill
+                                        width={48}
+                                        height={48}
                                         className="object-contain"
+                                        priority={false}
+                                        unoptimized={false}
+                                        style={{ color: 'transparent' }}
                                     />
                                 </div>
                                 <div>
@@ -93,41 +95,29 @@ export function Footer() {
                                 The most primitive and extensive club as well as the biggest club in Daffodil International University.
                                 We work together to explore every field of Computer Science.
                             </p>
-                        </motion.div>
+                        </div>
 
                         {/* Social Links */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.1 }}
-                        >
+                        <div>
                             <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
                             <div className="flex space-x-4">
                                 {socialLinks.map((social) => (
-                                    <motion.a
+                                    <a
                                         key={social.name}
                                         href={social.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`p-2 bg-gray-800 rounded-lg transition-colors duration-300 ${social.color}`}
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        className={`p-2 bg-gray-800 rounded-lg transition-colors duration-300 hover:scale-110 ${social.color}`}
                                     >
                                         <social.icon className="w-5 h-5" />
-                                    </motion.a>
+                                    </a>
                                 ))}
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
 
                     {/* Quick Links */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                    >
+                    <div>
                         <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
                         <ul className="space-y-3">
                             {quickLinks.map((link) => (
@@ -144,15 +134,10 @@ export function Footer() {
                                 </li>
                             ))}
                         </ul>
-                    </motion.div>
+                    </div>
 
                     {/* Wings */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                    >
+                    <div>
                         <h4 className="text-lg font-semibold mb-6">Our Wings</h4>
                         <ul className="space-y-3">
                             {wings.map((wing) => (
@@ -169,15 +154,10 @@ export function Footer() {
                                 </li>
                             ))}
                         </ul>
-                    </motion.div>
+                    </div>
 
                     {/* Contact Info */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                    >
+                    <div>
                         <h4 className="text-lg font-semibold mb-6">Contact Info</h4>
                         <div className="space-y-4">
                             {contactInfo.map((contact, index) => (
@@ -189,7 +169,7 @@ export function Footer() {
                                 </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
 
@@ -197,23 +177,11 @@ export function Footer() {
             <div className="border-t border-gray-800">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="text-gray-400 text-sm"
-                        >
-                            © {currentYear} Daffodil International University Computer & Programming Club. All rights reserved.
-                        </motion.div>
+                        <div className="text-gray-400 text-sm">
+                            Copyright © {currentYear} DIU CPC. All rights reserved. Developed by <Link href="/developed-by" className="text-gray-400 hover:text-white transition-colors duration-300">DIU CPC Web Team</Link>.
+                        </div>
 
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="flex space-x-6 text-sm"
-                        >
+                        <div className="flex space-x-6 text-sm">
                             <Link
                                 href="/privacy"
                                 className="text-gray-400 hover:text-white transition-colors duration-300"
@@ -232,20 +200,15 @@ export function Footer() {
                             >
                                 Sitemap
                             </Link>
-                        </motion.div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Back to Top Button */}
-            <motion.button
+            <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg transition-colors duration-300 z-50"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1 }}
+                className="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 hover:scale-110 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
             >
                 <svg
                     className="w-6 h-6"
@@ -260,7 +223,7 @@ export function Footer() {
                         d="M5 10l7-7m0 0l7 7m-7-7v18"
                     />
                 </svg>
-            </motion.button>
+            </button>
         </footer>
     );
 }
