@@ -70,7 +70,7 @@ export const Navigation = () => {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2 group">
+            <Link href="/" className="flex items-center space-x-2 group pt-2">
               <Image
                 src={CPCLogo}
                 alt="CPC Logo"

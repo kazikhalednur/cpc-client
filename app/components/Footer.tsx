@@ -19,9 +19,11 @@ import CPCLogo from "@/assets/images/CPC-Logo.png";
 
 export function Footer() {
     const [currentYear, setCurrentYear] = useState(2024);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setCurrentYear(new Date().getFullYear());
+        setIsClient(true);
     }, []);
 
     const quickLinks = [
@@ -75,16 +77,20 @@ export function Footer() {
                         <div className="mb-6">
                             <Link href="/" className="flex items-center space-x-3 mb-4">
                                 <div className="relative w-12 h-12 pt-4">
-                                    <Image
-                                        src={CPCLogo}
-                                        alt="DIU CPC Logo"
-                                        width={48}
-                                        height={48}
-                                        className="object-contain"
-                                        priority={false}
-                                        unoptimized={false}
-                                        style={{ color: 'transparent' }}
-                                    />
+                                    {isClient ? (
+                                        <Image
+                                            src={CPCLogo}
+                                            alt="DIU CPC Logo"
+                                            width={48}
+                                            height={48}
+                                            className="object-contain"
+                                            priority={false}
+                                            unoptimized={false}
+                                            style={{ color: 'transparent' }}
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 bg-gray-700 rounded animate-pulse" />
+                                    )}
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold text-white">DIU CPC</h3>
