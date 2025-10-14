@@ -5,111 +5,42 @@ import Link from "next/link";
 import { FiClock, FiUsers, FiAward, FiTrendingUp } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
-import { useState, useRef } from "react";
-
-interface Contest {
+import { useState, useRef, useEffect } from "react";
+type ApiContest = {
   id: string;
   title: string;
-  image: string;
-  date: string;
-  participants: number;
-  difficulty: "Easy" | "Medium" | "Hard";
-  status: "Upcoming" | "Ongoing" | "Completed";
-  platform: string;
-  prize: string;
   description: string;
-}
+  start_time: string;
+  end_time: string;
+  platform: string;
+  difficulty_level: "Easy" | "Medium" | "Hard" | "EASY" | "MEDIUM" | "HARD";
+  prize?: string;
+  image: string;
+  status: "UPCOMING" | "ONGOING" | "COMPLETED" | string;
+  participants: number;
+};
 
 const FeaturedContests = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [contests, setContests] = useState<ApiContest[]>([]);
+  const [loading, setLoading] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const contests: Contest[] = [
-    {
-      id: "1",
-      title: "Weekly Programming Contest",
-      image:
-        "https://images.unsplash.com/photo-1623479322729-28b25c16b011?ixlib=rb-4.0.3",
-      date: "2024-03-01T15:00:00",
-      participants: 156,
-      difficulty: "Medium",
-      status: "Upcoming",
-      platform: "Codeforces",
-      prize: "$500",
-      description:
-        "Test your algorithmic skills in this weekly competitive programming contest. Solve challenging problems and compete with fellow programmers.",
-    },
-    {
-      id: "2",
-      title: "AI/ML Hackathon",
-      image:
-        "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3",
-      date: "2024-03-15T09:00:00",
-      participants: 98,
-      difficulty: "Hard",
-      status: "Upcoming",
-      platform: "Kaggle",
-      prize: "$1000",
-      description:
-        "Build innovative AI solutions for real-world problems. Great opportunity for ML enthusiasts to showcase their skills.",
-    },
-    {
-      id: "3",
-      title: "Web Development Challenge",
-      image:
-        "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-4.0.3",
-      date: "2024-03-10T10:00:00",
-      participants: 124,
-      difficulty: "Easy",
-      status: "Upcoming",
-      platform: "DevChallenges",
-      prize: "$300",
-      description:
-        "Create responsive and modern web applications using the latest technologies. Perfect for frontend and full-stack developers.",
-    },
-    {
-      id: "4",
-      title: "Data Science Competition",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3",
-      date: "2024-03-20T14:00:00",
-      participants: 212,
-      difficulty: "Hard",
-      status: "Upcoming",
-      platform: "DataCamp",
-      prize: "$2000",
-      description:
-        "Analyze complex datasets and develop predictive models in this challenging data science competition.",
-    },
-    {
-      id: "5",
-      title: "Mobile App Innovation",
-      image:
-        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3",
-      date: "2024-04-05T09:00:00",
-      participants: 76,
-      difficulty: "Medium",
-      status: "Upcoming",
-      platform: "DevPost",
-      prize: "$1500",
-      description:
-        "Design and develop innovative mobile applications that solve real-world problems. Open for both Android and iOS developers.",
-    },
-    {
-      id: "6",
-      title: "Cybersecurity Challenge",
-      image:
-        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3",
-      date: "2024-03-25T10:00:00",
-      participants: 89,
-      difficulty: "Hard",
-      status: "Upcoming",
-      platform: "HackTheBox",
-      prize: "$2500",
-      description:
-        "Test your security skills in this intensive cybersecurity challenge. Identify vulnerabilities and propose solutions.",
-    },
-  ];
+  useEffect(() => {
+    fetchFeaturedContests();
+  }, []);
+
+  const fetchFeaturedContests = async () => {
+    try {
+      const res = await fetch(`/api/contests?status=UPCOMING&limit=6`, { cache: "no-store" });
+      const json = await res.json();
+      setContests(json?.data?.results ?? []);
+    } catch (error) {
+      console.error("Error fetching featured contests:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlers = useSwipeable({
     onSwipedLeft: () => nextSlide(),
@@ -119,16 +50,72 @@ const FeaturedContests = () => {
   });
 
   const nextSlide = () => {
+    if (contests.length === 0) return;
     setCurrentSlide((prev) => (prev + 1) % Math.ceil(contests.length / 3));
   };
 
   const prevSlide = () => {
+    if (contests.length === 0) return;
     setCurrentSlide(
       (prev) =>
         (prev - 1 + Math.ceil(contests.length / 3)) %
         Math.ceil(contests.length / 3)
     );
   };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case "EASY":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      case "MEDIUM":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+      case "HARD":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "UPCOMING":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      case "ONGOING":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      case "COMPLETED":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading contests...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (contests.length === 0) {
+    return (
+      <section className="py-16 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Featured Contests
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">No contests available at the moment.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 bg-white dark:bg-gray-900">
@@ -212,30 +199,12 @@ const FeaturedContests = () => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute top-4 right-4 flex gap-2">
                             <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium 
-                            ${contest.difficulty === "Easy" &&
-                                "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                }
-                            ${contest.difficulty === "Medium" &&
-                                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                }
-                            ${contest.difficulty === "Hard" &&
-                                "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                                }`}
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor((contest as any).difficulty ?? contest.difficulty_level)}`}
                             >
-                              {contest.difficulty}
+                              {(contest as any).difficulty ?? contest.difficulty_level}
                             </span>
                             <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium 
-                            ${contest.status === "Upcoming" &&
-                                "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                                }
-                            ${contest.status === "Ongoing" &&
-                                "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                }
-                            ${contest.status === "Completed" &&
-                                "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
-                                }`}
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contest.status)}`}
                             >
                               {contest.status}
                             </span>
@@ -259,7 +228,7 @@ const FeaturedContests = () => {
                             <div className="flex items-center gap-2">
                               <FiClock className="w-4 h-4" />
                               <span>
-                                {new Date(contest.date).toLocaleDateString()}
+                                {new Date((contest as any).startTime ?? contest.start_time).toLocaleDateString()}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -298,8 +267,8 @@ const FeaturedContests = () => {
                 key={index}
                 onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 rounded-full transition-colors ${index === currentSlide
-                    ? "bg-indigo-600 dark:bg-indigo-400"
-                    : "bg-gray-300 dark:bg-gray-600"
+                  ? "bg-indigo-600 dark:bg-indigo-400"
+                  : "bg-gray-300 dark:bg-gray-600"
                   }`}
               />
             )
