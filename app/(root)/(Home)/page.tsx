@@ -68,11 +68,11 @@ export default function Home() {
       {/* Committee Section */}
       <CommitteeSection />
 
-      {/* Featured Contests */}
-      <FeaturedContests />
-
       {/* Events Slider */}
       <EventsSlider />
+
+      {/* Featured Contests */}
+      <FeaturedContests />
 
       {/* Recent Achievements - Light Background */}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">

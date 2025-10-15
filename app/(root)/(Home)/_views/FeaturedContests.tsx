@@ -5,42 +5,20 @@ import Link from "next/link";
 import { FiClock, FiUsers, FiAward, FiTrendingUp } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
-import { useState, useRef, useEffect } from "react";
-type ApiContest = {
-  id: string;
-  title: string;
-  description: string;
-  start_time: string;
-  end_time: string;
-  platform: string;
-  difficulty_level: "Easy" | "Medium" | "Hard" | "EASY" | "MEDIUM" | "HARD";
-  prize?: string;
-  image: string;
-  status: "UPCOMING" | "ONGOING" | "COMPLETED" | string;
-  participants: number;
-};
+import { useState, useRef } from "react";
+import { useGetContestsQuery } from "@/lib/api/contestApi";
+import type { NormalizedContest } from "@/lib/api/contestApi";
 
 const FeaturedContests = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [contests, setContests] = useState<ApiContest[]>([]);
-  const [loading, setLoading] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchFeaturedContests();
-  }, []);
+  const { data, isLoading } = useGetContestsQuery({
+    status: "UPCOMING",
+    page_size: 6,
+  });
 
-  const fetchFeaturedContests = async () => {
-    try {
-      const res = await fetch(`/api/contests?status=UPCOMING&limit=6`, { cache: "no-store" });
-      const json = await res.json();
-      setContests(json?.data?.results ?? []);
-    } catch (error) {
-      console.error("Error fetching featured contests:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const contests: NormalizedContest[] = data?.results || [];
 
   const handlers = useSwipeable({
     onSwipedLeft: () => nextSlide(),
@@ -89,7 +67,7 @@ const FeaturedContests = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
@@ -199,9 +177,9 @@ const FeaturedContests = () => {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute top-4 right-4 flex gap-2">
                             <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor((contest as any).difficulty ?? contest.difficulty_level)}`}
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(contest.difficulty)}`}
                             >
-                              {(contest as any).difficulty ?? contest.difficulty_level}
+                              {contest.difficulty}
                             </span>
                             <span
                               className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contest.status)}`}
@@ -228,7 +206,7 @@ const FeaturedContests = () => {
                             <div className="flex items-center gap-2">
                               <FiClock className="w-4 h-4" />
                               <span>
-                                {new Date((contest as any).startTime ?? contest.start_time).toLocaleDateString()}
+                                {new Date(contest.startTime).toLocaleDateString()}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -249,7 +227,7 @@ const FeaturedContests = () => {
                                    hover:to-purple-700 text-white text-center py-3 rounded-lg transition-all duration-300 
                                    shadow-md hover:shadow-xl hover:shadow-indigo-500/20"
                           >
-                            Register Now
+                            View Contest
                           </Link>
                         </div>
                       </motion.div>

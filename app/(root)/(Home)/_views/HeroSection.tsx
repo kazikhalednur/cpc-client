@@ -4,8 +4,6 @@ import {
   FiUsers,
   FiCode,
   FiArrowRight,
-  FiStar,
-  FiChevronDown,
   FiMousePointer,
 } from "react-icons/fi";
 import Image from "next/image";
