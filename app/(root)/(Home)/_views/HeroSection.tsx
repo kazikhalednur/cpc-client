@@ -91,9 +91,12 @@ export default function HeroSection() {
                       <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
                     </Link>
                   )}
-                  <button className="px-6 sm:px-8 py-3 sm:py-4 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-2xl hover:bg-white/10 transition-all duration-300 text-sm sm:text-base">
+                  <Link
+                    href="/wings"
+                    className="px-6 sm:px-8 py-3 sm:py-4 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-2xl hover:bg-white/10 transition-all duration-300 text-sm sm:text-base inline-block"
+                  >
                     Learn More
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Stats Grid */}

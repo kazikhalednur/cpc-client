@@ -47,9 +47,9 @@ export const Navigation = () => {
 
   const menuItems = [
     { label: "Home", href: "/" },
+    { label: "Committees", href: "/committee" },
     { label: "Events", href: "/events" },
     { label: "Contests", href: "/contests" },
-    { label: "Resources", href: "/resources" },
     { label: "Verify Certificate", href: "/verify" },
     ...(isAuthenticated && (user?.role === Role.ADMIN || user?.role === Role.SUPER_ADMIN)
       ? [{ label: "Dashboard", href: "/dashboard" }]
