@@ -18,6 +18,7 @@ import { Navigation } from "@/app/components/Navigation";
 import FeaturedContests from "./_views/FeaturedContests";
 import EventsSlider from "./_views/EventsSlider";
 import HeroSection from "./_views/HeroSection";
+import CommitteeSection from "./_views/CommitteeSection";
 
 export default function Home() {
   return (
@@ -28,9 +29,6 @@ export default function Home() {
 
       {/* Announcement Section */}
       <NoticeSection />
-
-      {/* Wings Section */}
-      <WingsSection />
 
       {/* Quick Access Section */}
       <section className="py-12 bg-background">
@@ -63,6 +61,12 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Wings Section */}
+      <WingsSection />
+
+      {/* Committee Section */}
+      <CommitteeSection />
 
       {/* Featured Contests */}
       <FeaturedContests />
@@ -227,7 +231,7 @@ export default function Home() {
       </section>
 
       {/* Footer with more sections */}
-      
+
     </div>
   );
 }

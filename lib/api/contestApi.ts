@@ -105,6 +105,32 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
     return result;
 };
 
+export type CommitteePanel = {
+    id: string;
+    type: "STUDENT" | "ADVISOR";
+    image: string;
+};
+
+export type Committee = {
+    id: string;
+    year: string;
+    panels: CommitteePanel[];
+};
+
+export type CommitteesResponse = {
+    success: boolean;
+    status_code: number;
+    message: string;
+    data: Committee[];
+};
+
+export type CommitteeDetailResponse = {
+    success: boolean;
+    status_code: number;
+    message: string;
+    data: Committee;
+};
+
 export const contestApi = createApi({
     reducerPath: 'contestApi',
     baseQuery: baseQueryWithReauth,
@@ -189,9 +215,17 @@ export const contestApi = createApi({
                 };
             },
         }),
+        getCommittees: builder.query<Committee[], void>({
+            query: () => ({ url: '/committees/' }),
+            transformResponse: (response: CommitteesResponse) => response.data || [],
+        }),
+        getCommitteeById: builder.query<Committee, string>({
+            query: (id) => ({ url: `/committees/${id}/` }),
+            transformResponse: (response: CommitteeDetailResponse) => response.data,
+        }),
     }),
 });
 
-export const { useGetContestsQuery, useGetContestByIdQuery } = contestApi;
+export const { useGetContestsQuery, useGetContestByIdQuery, useGetCommitteesQuery, useGetCommitteeByIdQuery } = contestApi;
 
 
