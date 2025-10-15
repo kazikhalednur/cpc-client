@@ -19,55 +19,28 @@ import {
     FiGlobe,
     FiLayers,
     FiZap,
+    FiCpu,
+    FiDatabase,
+    FiShield,
+    FiActivity,
+    FiUserPlus,
+    FiCheckCircle,
 } from "react-icons/fi";
 
 export default function WingsPage() {
 
     const wings = [
-        {
-            id: "development",
-            name: "Development Wing",
-            shortName: "DEV",
-            description: "Empowering students with cutting-edge development skills and real-world project experience.",
-            longDescription: "The Development Wing focuses on nurturing software development skills through hands-on projects, workshops, and industry collaborations. We work with modern technologies and frameworks to build innovative solutions.",
-            icon: FiCode,
-            color: "from-blue-500 to-cyan-500",
-            bgColor: "bg-blue-50 dark:bg-blue-900/20",
-            borderColor: "border-blue-200 dark:border-blue-800",
-            features: [
-                "Full-stack web development",
-                "Mobile app development",
-                "DevOps and deployment",
-                "Open source contributions",
-                "Industry partnerships",
-                "Mentorship programs"
-            ],
-            technologies: ["React", "Node.js", "Python", "Django", "Flutter", "Docker", "AWS"],
-            stats: {
-                members: "150+",
-                projects: "50+",
-                workshops: "25+",
-                hackathons: "10+"
-            },
-            achievements: [
-                "Winner of National Hackathon 2023",
-                "Published 20+ open source projects",
-                "Collaborated with 5+ tech companies",
-                "Organized 15+ technical workshops"
-            ],
-            image: "/assets/images/wing_dev.png",
-            href: "/wings/development"
-        },
+        // ACM first
         {
             id: "acm",
             name: "ACM Task Force",
             shortName: "ACM",
             description: "Competitive programming excellence and algorithmic problem-solving mastery.",
             longDescription: "The ACM Task Force is dedicated to competitive programming and algorithmic excellence. We prepare students for national and international programming contests while building strong problem-solving skills.",
-            icon: FiTarget,
-            color: "from-green-500 to-emerald-500",
-            bgColor: "bg-green-50 dark:bg-green-900/20",
-            borderColor: "border-green-200 dark:border-green-800",
+            icon: FiAward,
+            color: "from-blue-600 to-indigo-600",
+            bgColor: "bg-blue-50 dark:bg-blue-900/20",
+            borderColor: "border-blue-200 dark:border-blue-800",
             features: [
                 "Competitive programming training",
                 "Algorithm and data structures",
@@ -92,6 +65,42 @@ export default function WingsPage() {
             image: "/assets/images/wing_acm.png",
             href: "/wings/acm"
         },
+        // Development second
+        {
+            id: "development",
+            name: "Development Wing",
+            shortName: "DEV",
+            description: "Empowering students with cutting-edge development skills and real-world project experience.",
+            longDescription: "The Development Wing focuses on nurturing software development skills through hands-on projects, workshops, and industry collaborations. We work with modern technologies and frameworks to build innovative solutions.",
+            icon: FiCode,
+            color: "from-purple-600 to-pink-600",
+            bgColor: "bg-purple-50 dark:bg-purple-900/20",
+            borderColor: "border-purple-200 dark:border-purple-800",
+            features: [
+                "Full-stack web development",
+                "Mobile app development",
+                "DevOps and deployment",
+                "Open source contributions",
+                "Industry partnerships",
+                "Mentorship programs"
+            ],
+            technologies: ["React", "Node.js", "Python", "Django", "Flutter", "Docker", "AWS"],
+            stats: {
+                members: "150+",
+                projects: "50+",
+                workshops: "25+",
+                hackathons: "10+"
+            },
+            achievements: [
+                "Winner of National Hackathon 2023",
+                "Published 20+ open source projects",
+                "Collaborated with 5+ tech companies",
+                "Organized 15+ technical workshops"
+            ],
+            image: "/assets/images/wing_dev.png",
+            href: "/wings/development"
+        },
+        // Research third
         {
             id: "research",
             name: "Research & Journal",
@@ -120,12 +129,13 @@ export default function WingsPage() {
                 "Collaborated with faculty research"
             ],
             icon: FiBookOpen,
-            color: "from-purple-500 to-violet-500",
-            bgColor: "bg-purple-50 dark:bg-purple-900/20",
-            borderColor: "border-purple-200 dark:border-purple-800",
+            color: "from-emerald-600 to-teal-600",
+            bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
+            borderColor: "border-emerald-200 dark:border-emerald-800",
             image: "/assets/images/wing_r&j.png",
             href: "/wings/research"
         },
+        // Job fourth
         {
             id: "job",
             name: "Job Career & Industry Collaboration",
@@ -154,7 +164,7 @@ export default function WingsPage() {
                 "150+ successful placements"
             ],
             icon: FiBriefcase,
-            color: "from-orange-500 to-red-500",
+            color: "from-orange-600 to-red-600",
             bgColor: "bg-orange-50 dark:bg-orange-900/20",
             borderColor: "border-orange-200 dark:border-orange-800",
             image: "/assets/images/wing_jcic.png",
@@ -267,8 +277,11 @@ export default function WingsPage() {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                {wing.stats.members}
+                                            <div className="flex items-center justify-end gap-2 mb-1">
+                                                <FiUsers className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                                                    {wing.stats.members}
+                                                </div>
                                             </div>
                                             <div className="text-sm text-gray-600 dark:text-gray-400">
                                                 Active Members
@@ -283,7 +296,8 @@ export default function WingsPage() {
 
                                     {/* Technologies */}
                                     <div className="mb-6">
-                                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                                        <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                                            <FiCpu className="w-4 h-4" />
                                             Key Technologies
                                         </h4>
                                         <div className="flex flex-wrap gap-2">
@@ -304,17 +318,40 @@ export default function WingsPage() {
                                     </div>
 
                                     {/* Stats */}
-                                    <div className="grid grid-cols-2 gap-4 mb-6">
-                                        {Object.entries(wing.stats).map(([key, value]) => (
-                                            <div key={key} className="text-center">
-                                                <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                                    {value}
+                                    <div className="grid grid-cols-2 md:grid-cols-2 gap-3 mb-5">
+                                        {Object.entries(wing.stats).map(([key, value]) => {
+                                            const getIcon = (statKey: string) => {
+                                                switch (statKey) {
+                                                    case 'members': return FiUsers;
+                                                    case 'projects': return FiCode;
+                                                    case 'contests': return FiTarget;
+                                                    case 'papers': return FiBookOpen;
+                                                    case 'partnerships': return FiBriefcase;
+                                                    case 'workshops': return FiCalendar;
+                                                    case 'hackathons': return FiZap;
+                                                    case 'achievements': return FiAward;
+                                                    case 'publications': return FiStar;
+                                                    case 'conferences': return FiGlobe;
+                                                    case 'placements': return FiUserPlus;
+                                                    case 'events': return FiActivity;
+                                                    default: return FiCheckCircle;
+                                                }
+                                            };
+                                            const IconComponent = getIcon(key);
+                                            return (
+                                                <div key={key} className="text-center leading-tight">
+                                                    <div className="flex items-center justify-center gap-1 mb-1">
+                                                        <IconComponent className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <div className="text-xl font-bold text-gray-900 dark:text-white">
+                                                            {value}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                                                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                                                    </div>
                                                 </div>
-                                                <div className="text-xs text-gray-600 dark:text-gray-400 capitalize">
-                                                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
 
                                     {/* CTA */}
@@ -404,14 +441,16 @@ export default function WingsPage() {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link
                                 href="/auth/signup"
-                                className="px-8 py-4 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300"
+                                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300"
                             >
+                                <FiUserPlus className="w-5 h-5" />
                                 Join DIU CPC
                             </Link>
                             <Link
                                 href="/events"
-                                className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors duration-300"
+                                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors duration-300"
                             >
+                                <FiCalendar className="w-5 h-5" />
                                 View Upcoming Events
                             </Link>
                         </div>
