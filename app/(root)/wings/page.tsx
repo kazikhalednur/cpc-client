@@ -22,7 +22,6 @@ import {
 } from "react-icons/fi";
 
 export default function WingsPage() {
-    const [activeWing, setActiveWing] = useState<string | null>(null);
 
     const wings = [
         {
@@ -249,9 +248,7 @@ export default function WingsPage() {
                             <motion.div
                                 key={wing.id}
                                 variants={itemVariants}
-                                className={`group relative overflow-hidden rounded-2xl ${wing.bgColor} ${wing.borderColor} border-2 transition-all duration-500 hover:shadow-2xl hover:scale-105`}
-                                onMouseEnter={() => setActiveWing(wing.id)}
-                                onMouseLeave={() => setActiveWing(null)}
+                                className={`relative overflow-hidden rounded-2xl ${wing.bgColor} ${wing.borderColor} border-2`}
                             >
                                 <div className="p-8">
                                     {/* Header */}
@@ -323,33 +320,13 @@ export default function WingsPage() {
                                     {/* CTA */}
                                     <Link
                                         href={wing.href}
-                                        className={`inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r ${wing.color} text-white rounded-lg font-semibold transition-all duration-300 hover:shadow-lg group-hover:scale-105`}
+                                        className={`inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r ${wing.color} text-white rounded-lg font-semibold`}
                                     >
                                         <span>Explore {wing.shortName}</span>
-                                        <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                        <FiArrowRight className="w-4 h-4" />
                                     </Link>
                                 </div>
 
-                                {/* Hover Overlay */}
-                                {activeWing === wing.id && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="absolute inset-0 bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-sm flex items-center justify-center"
-                                    >
-                                        <div className="text-center text-white p-6">
-                                            <h4 className="text-xl font-bold mb-4">Key Achievements</h4>
-                                            <ul className="space-y-2 text-sm">
-                                                {wing.achievements.slice(0, 3).map((achievement, index) => (
-                                                    <li key={index} className="flex items-center space-x-2">
-                                                        <FiStar className="w-4 h-4 text-yellow-400" />
-                                                        <span>{achievement}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </motion.div>
-                                )}
                             </motion.div>
                         ))}
                     </motion.div>
