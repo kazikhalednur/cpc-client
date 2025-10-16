@@ -18,12 +18,12 @@ export default function BlogList() {
     const { data: apiCategories } = useGetBlogCategoriesQuery();
     const { data: blogsData } = useGetBlogsQuery({
         page: currentPage,
-        page_size: 6,
+        page_size: 18,
         category: selectedCategory !== 'All' ? (apiCategories?.find(c => c.title === selectedCategory)?.slug || undefined) : undefined,
         author: searchQuery || undefined,
     });
 
-    const postsPerPage = 6;
+    const postsPerPage = 18;
 
     useEffect(() => {
         setMounted(true);

@@ -39,7 +39,7 @@ export default function ContestsPage() {
     const [showFilters, setShowFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const debouncedSearch = useDebounce(searchTerm, 500);
-    const pageSize = 12;
+    const pageSize = 18;
     const difficultyParam = selectedDifficulty === "all"
         ? undefined
         : selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1).toLowerCase();
