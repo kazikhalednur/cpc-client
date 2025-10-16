@@ -72,7 +72,9 @@ export const Navigation = () => {
               : "bg-transparent"
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-5/6 mx-auto px-4 sm:px-6 lg:px-8">
+        {/* To widen further, increase max width */}
+
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">

@@ -77,7 +77,7 @@ export function Footer() {
     return (
         <footer className={`${mounted && theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} transition-colors duration-300`}>
             {/* Main Footer Content */}
-            <div className="container mx-auto px-4 py-12">
+            <div className="w-5/6 mx-auto px-4 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
@@ -188,7 +188,7 @@ export function Footer() {
 
             {/* Bottom Bar */}
             <div className={`border-t ${mounted && theme === "dark" ? "border-gray-800" : "border-gray-200"}`}>
-                <div className="container mx-auto px-4 py-6">
+                <div className="w-5/6 mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <div className={`text-sm ${mounted && theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                             Copyright © {currentYear} DIU CPC. All rights reserved. Developed by <Link href="/developed-by" className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}>DIU CPC Web Team</Link>.
