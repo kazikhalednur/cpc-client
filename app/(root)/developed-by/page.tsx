@@ -21,15 +21,16 @@ import {
     FiCalendar,
     FiTag,
 } from "react-icons/fi";
+import KaziKhaledNur from "@/assets/images/kazi_khaled_nur.png";
 
 export default function DevelopedByPage() {
 
     const developers = [
         {
-            id: "lead-dev",
-            name: "Development Team",
-            role: "Lead Developers",
-            avatar: "/assets/images/avatar_male.png",
+            id: "full_stack_dev",
+            name: "Kazi Khaled Nur",
+            role: "Software Engineer",
+            avatar: KaziKhaledNur,
             bio: "Passionate developers dedicated to creating innovative solutions for the DIU CPC community.",
             contributions: [
                 "Full-stack web development",
@@ -39,21 +40,21 @@ export default function DevelopedByPage() {
                 "Performance optimization",
                 "Security implementation"
             ],
-            skills: ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL", "Prisma"],
+            skills: ["Python", "Django", "Django REST Framework", "Django ORM", "MySQL", "JWT Authentication"],
             social: {
-                github: "https://github.com/diucpc",
-                linkedin: "https://linkedin.com/company/diu-cpc",
-                email: "dev@diucpc.org"
+                github: "https://github.com/kazikhalednur",
+                linkedin: "https://linkedin.com/in/kazikhalednur",
+                email: "kazikhalednur@gmail.com"
             },
             joinDate: "2024",
-            projects: "15+",
+            projects: "10+",
             commits: "500+"
         },
         {
-            id: "design-team",
-            name: "Design Team",
-            role: "UI/UX Designers",
-            avatar: "/assets/images/avatar_female.png",
+            id: "frontend_dev",
+            name: "MD Biplob Molla",
+            role: "Frontend Developer",
+            avatar: "/assets/images/avatar_male.png",
             bio: "Creative minds behind the beautiful and intuitive user interface of the DIU CPC platform.",
             contributions: [
                 "User interface design",
@@ -126,8 +127,8 @@ export default function DevelopedByPage() {
 
     const stats = [
         { icon: FiCode, value: "10,000+", label: "Lines of Code" },
-        { icon: FiUsers, value: "8", label: "Contributors" },
-        { icon: FiCalendar, value: "6", label: "Months Development" },
+        { icon: FiUsers, value: "2", label: "Contributors" },
+        { icon: FiCalendar, value: "3", label: "Months Development" },
         { icon: FiAward, value: "100%", label: "Open Source" }
     ];
 
