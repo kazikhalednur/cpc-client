@@ -10,9 +10,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 export default function HeroSection() {
   const { data: session } = useSession();
+  const { theme } = useTheme();
 
   // Create motion values for counting animations
   const contestsCount = useMotionValue(0);
@@ -34,9 +36,9 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <div className="relative h-screen bg-[#0A0A0A] overflow-hidden">
+    <div className={`relative h-screen overflow-hidden ${theme === "dark" ? "bg-[#0A0A0A]" : "bg-gradient-to-br from-gray-50 to-gray-100"}`}>
       {/* Background Gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#1A1A1A] via-[#0A0A0A] to-[#0A0A0A]" />
+      <div className={`absolute inset-0 ${theme === "dark" ? "bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#1A1A1A] via-[#0A0A0A] to-[#0A0A0A]" : "bg-gradient-to-br from-gray-50 via-white to-gray-100"}`} />
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
@@ -59,7 +61,7 @@ export default function HeroSection() {
                 transition={{ duration: 0.8 }}
                 className="max-w-2xl"
               >
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+                <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                   Elevate Your{" "}
                   <span className="relative">
                     <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400">
@@ -68,7 +70,7 @@ export default function HeroSection() {
                     <span className="absolute inset-x-0 bottom-0 h-3 bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 opacity-30 blur-lg" />
                   </span>
                 </h1>
-                <p className="text-lg sm:text-xl text-gray-400 mb-6 sm:mb-8 leading-relaxed">
+                <p className={`text-lg sm:text-xl mb-6 sm:mb-8 leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                   Join our elite community of programmers. Compete in
                   challenging contests, solve complex problems, and rise through
                   the ranks.
@@ -93,7 +95,7 @@ export default function HeroSection() {
                   )}
                   <Link
                     href="/wings"
-                    className="px-6 sm:px-8 py-3 sm:py-4 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-2xl hover:bg-white/10 transition-all duration-300 text-sm sm:text-base inline-block"
+                    className={`px-6 sm:px-8 py-3 sm:py-4 rounded-2xl transition-all duration-300 text-sm sm:text-base inline-block ${theme === "dark" ? "bg-white/5 backdrop-blur-sm border border-white/10 text-white hover:bg-white/10" : "bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200"}`}
                   >
                     Learn More
                   </Link>
@@ -103,49 +105,49 @@ export default function HeroSection() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="bg-white/5 backdrop-blur-sm p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10"
+                    className={`${theme === "dark" ? "bg-white/5 backdrop-blur-sm border border-white/10" : "bg-white/80 backdrop-blur-sm border border-gray-200"} p-4 sm:p-6 rounded-2xl sm:rounded-3xl`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                       <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                         <FiCode className="w-4 h-4 sm:w-6 sm:h-6 text-indigo-400" />
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                      <h3 className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                         <motion.span>{contests}</motion.span>+
                       </h3>
                     </div>
-                    <p className="text-sm sm:text-base text-gray-400">
+                    <p className={`text-sm sm:text-base ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                       Active Contests
                     </p>
                   </motion.div>
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="bg-white/5 backdrop-blur-sm p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10"
+                    className={`${theme === "dark" ? "bg-white/5 backdrop-blur-sm border border-white/10" : "bg-white/80 backdrop-blur-sm border border-gray-200"} p-4 sm:p-6 rounded-2xl sm:rounded-3xl`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                       <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-purple-500/10 border border-purple-500/20">
                         <FiUsers className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400" />
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                      <h3 className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                         <motion.span>{participants}</motion.span>+
                       </h3>
                     </div>
-                    <p className="text-sm sm:text-base text-gray-400">
+                    <p className={`text-sm sm:text-base ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                       Participants
                     </p>
                   </motion.div>
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="bg-white/5 backdrop-blur-sm p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10"
+                    className={`${theme === "dark" ? "bg-white/5 backdrop-blur-sm border border-white/10" : "bg-white/80 backdrop-blur-sm border border-gray-200"} p-4 sm:p-6 rounded-2xl sm:rounded-3xl`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                       <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                         <FiAward className="w-4 h-4 sm:w-6 sm:h-6 text-indigo-400" />
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                      <h3 className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                         <motion.span>{winners}</motion.span>+
                       </h3>
                     </div>
-                    <p className="text-sm sm:text-base text-gray-400">
+                    <p className={`text-sm sm:text-base ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                       Winners
                     </p>
                   </motion.div>
@@ -187,7 +189,7 @@ export default function HeroSection() {
       </div>
 
       {/* Bottom Gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0A0A0A] to-transparent" />
+      <div className={`absolute bottom-0 left-0 right-0 h-32 ${theme === "dark" ? "bg-gradient-to-t from-[#0A0A0A] to-transparent" : "bg-gradient-to-t from-gray-50 to-transparent"}`} />
 
       {/* Decorative Mouse Icon */}
       <motion.div
@@ -198,9 +200,9 @@ export default function HeroSection() {
       >
         <div className="relative">
           {/* Mouse Container */}
-          <div className="w-5 h-8 sm:w-6 sm:h-10 rounded-full border border-white/20 flex items-start justify-center p-1 sm:p-1.5">
+          <div className={`w-5 h-8 sm:w-6 sm:h-10 rounded-full flex items-start justify-center p-1 sm:p-1.5 ${theme === "dark" ? "border border-white/20" : "border border-gray-300"}`}>
             {/* Mouse Wheel */}
-            <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-white/40" />
+            <div className={`w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${theme === "dark" ? "bg-white/40" : "bg-gray-400"}`} />
           </div>
 
           {/* Animated Mouse Pointer */}
@@ -215,7 +217,7 @@ export default function HeroSection() {
               ease: "easeInOut",
             }}
           >
-            <FiMousePointer className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white/40" />
+            <FiMousePointer className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${theme === "dark" ? "text-white/40" : "text-gray-400"}`} />
           </motion.div>
         </div>
       </motion.div>
