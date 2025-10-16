@@ -7,6 +7,8 @@ import { FaGithub, FaLinkedinIn, FaDiscord } from "react-icons/fa";
 import { FiMail } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
+import { useGetBlogsQuery } from "@/lib/api/blogApi";
+import { useGetAchievementsQuery } from "@/lib/api/achievementApi";
 
 import cpclogo from "../../../assets/images/CPC-Logo.png";
 import ContestCard from "./_views/ContestCard";
@@ -24,6 +26,8 @@ import CommitteeSection from "./_views/CommitteeSection";
 export default function Home() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { data: blogsData } = useGetBlogsQuery({ page: 1, page_size: 3 });
+  const { data: achievementsData } = useGetAchievementsQuery({ page: 1, page_size: 3 });
 
   useEffect(() => {
     setMounted(true);
@@ -89,31 +93,20 @@ export default function Home() {
             Recent Achievements
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: "ICPC Regional 2024",
-                team: "Team Phoenix",
-                rank: "2nd Runner Up",
-                image:
-                  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=60",
-              },
-              {
-                title: "National Hackathon 2024",
-                team: "Team Dragons",
-                rank: "Champions",
-                image:
-                  "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=60",
-              },
-              {
-                title: "Google CodeJam 2024",
-                team: "Team Titans",
-                rank: "Top 100 Global",
-                image:
-                  "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&auto=format&fit=crop&q=60",
-              },
-            ].map((achievement, index) => (
-              <AchievementCard key={index} {...achievement} />
+            {(achievementsData?.results || []).slice(0, 3).map((a, index) => (
+              <AchievementCard key={a.id || index} title={a.title} team={a.team} rank={a.rank} image={a.image} />
             ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link
+              href="/achievements"
+              className={`inline-flex items-center px-6 py-3 rounded-full ${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/15 hover:border-white/30" : "bg-white/80 backdrop-blur-lg border border-gray-200 text-gray-900 hover:bg-white hover:border-gray-300"} font-medium transition-all duration-300 hover:scale-105 group`}
+            >
+              View All Achievements
+              <span className="ml-2 group-hover:translate-x-1 transition-transform">
+                →
+              </span>
+            </Link>
           </div>
         </div>
       </section>
@@ -143,40 +136,9 @@ export default function Home() {
 
           {/* Blog Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Understanding Dynamic Programming",
-                author: "Sarah Johnson",
-                date: "Apr 10, 2024",
-                readTime: "8 min read",
-                preview:
-                  "Master the art of dynamic programming with this comprehensive guide covering key concepts, patterns, and practical examples...",
-                image:
-                  "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&auto=format&fit=crop&q=60",
-              },
-              {
-                title: "Graph Algorithms in Competitive Programming",
-                author: "Michael Chen",
-                date: "Apr 8, 2024",
-                readTime: "12 min read",
-                preview:
-                  "Deep dive into essential graph algorithms including DFS, BFS, Dijkstra's, and their applications in competitive programming...",
-                image:
-                  "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=60",
-              },
-              {
-                title: "Mastering Binary Search",
-                author: "Alex Kumar",
-                date: "Apr 5, 2024",
-                readTime: "6 min read",
-                preview:
-                  "Learn advanced binary search techniques and how to apply them to solve complex competitive programming problems...",
-                image:
-                  "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&auto=format&fit=crop&q=60",
-              },
-            ].map((post, index) => (
+            {(blogsData?.results || []).slice(0, 3).map((post) => (
               <div
-                key={index}
+                key={post.id}
                 className={`${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg" : "bg-white/80 backdrop-blur-lg"} rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 
                            hover:-translate-y-1 overflow-hidden ${mounted && theme === "dark" ? "border border-white/20 hover:border-white/30" : "border border-gray-200 hover:border-gray-300"} group`}
               >
@@ -187,6 +149,7 @@ export default function Home() {
                     alt={post.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    unoptimized
                     suppressHydrationWarning
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-900/50 to-transparent" />
@@ -200,22 +163,22 @@ export default function Home() {
                   <div className={`flex items-center gap-2 mb-4 text-sm ${mounted && theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     <span>{post.author}</span>
                     <span>•</span>
-                    <span>{post.date}</span>
+                    <span>{new Date(post.date).toLocaleDateString()}</span>
                     <span>•</span>
                     <span>{post.readTime}</span>
                   </div>
                   <p className={`mb-4 line-clamp-2 ${mounted && theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
-                    {post.preview}
+                    {post.excerpt}
                   </p>
-                  <a
-                    href="#"
+                  <Link
+                    href={`/blogs/${post.slug}`}
                     className={`inline-flex items-center ${mounted && theme === "dark" ? "text-indigo-300 hover:text-indigo-200" : "text-indigo-600 hover:text-indigo-500"} font-medium group/link`}
                   >
                     Read more
                     <span className="ml-1 transform transition-transform group-hover/link:translate-x-1">
                       →
                     </span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -223,7 +186,7 @@ export default function Home() {
 
           {/* View All Button */}
           <div className="text-center mt-12">
-            <a
+            <Link
               href="/blogs"
               className={`inline-flex items-center px-6 py-3 rounded-full ${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/15 hover:border-white/30" : "bg-white/80 backdrop-blur-lg border border-gray-200 text-gray-900 hover:bg-white hover:border-gray-300"} font-medium transition-all duration-300 hover:scale-105 group`}
             >
@@ -231,7 +194,7 @@ export default function Home() {
               <span className="ml-2 group-hover:translate-x-1 transition-transform">
                 →
               </span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
