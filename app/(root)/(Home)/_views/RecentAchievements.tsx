@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import AchievementCard from "./AchievementCard";
 import { useGetAchievementsQuery } from "@/lib/api/achievementApi";
+type AchievementItem = {
+    id: string;
+    title: string;
+    team: string;
+    rank: string;
+    image: string;
+};
 
 const RecentAchievements = () => {
     const { theme } = useTheme();
@@ -22,7 +29,7 @@ const RecentAchievements = () => {
                     Recent Achievements
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {(achievementsData?.results || []).slice(0, 3).map((a: any, index: number) => (
+                    {(achievementsData?.results || []).slice(0, 3).map((a: AchievementItem, index: number) => (
                         <AchievementCard key={a.id || index} title={a.title} team={a.team} rank={a.rank} image={a.image} />
                     ))}
                 </div>

@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
 import { FiBook, FiSearch, FiEdit3, FiUsers, FiArrowLeft, FiExternalLink, FiCalendar, FiAward } from "react-icons/fi";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ResearchJournalPage() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -19,7 +19,7 @@ export default function AchievementsPage() {
     useEffect(() => {
         setPage(1);
     }, [search]);
-    const { data: achData, isLoading } = useGetAchievementsQuery({ page, page_size: pageSize, search: search || undefined });
+    const { data: achData } = useGetAchievementsQuery({ page, page_size: pageSize, search: search || undefined });
     const totalPages = Math.max(1, Math.ceil((achData?.count || 0) / pageSize));
     const current = achData?.results || [];
 
@@ -37,7 +37,7 @@ export default function AchievementsPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-6 sm:mb-10">
                         <h1 className={`text-4xl md:text-5xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Achievements</h1>
-                        <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Explore our club's milestones and recognitions</p>
+                        <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Explore our club&apos;s milestones and recognitions</p>
                     </div>
 
                     {/* Search */}

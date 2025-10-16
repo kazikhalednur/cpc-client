@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { TokenManager, DecodedToken, JWTTokens } from './jwt';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -46,37 +46,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         initAuth();
     }, []);
 
-    // Auto refresh token when it's about to expire
-    useEffect(() => {
-        if (!isAuthenticated) return;
-
-        const checkTokenExpiry = () => {
-            if (TokenManager.isAccessTokenExpired()) {
-                refreshToken();
-            }
-        };
-
-        // Check every 5 minutes
-        const interval = setInterval(checkTokenExpiry, 5 * 60 * 1000);
-
-        return () => clearInterval(interval);
-    }, [isAuthenticated]);
-
-    const login = (tokens: JWTTokens) => {
-        try {
-            TokenManager.setTokens(tokens);
-            const userInfo = TokenManager.getUserInfo();
-
-            setUser(userInfo);
-            setIsAuthenticated(true);
-
-            toast.success('Login successful!');
-        } catch (error) {
-            console.error('Login error:', error);
-            toast.error('Login failed');
-        }
-    };
-
     const logout = async () => {
         try {
             // Get refresh token before clearing
@@ -113,7 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     };
 
-    const refreshToken = async (): Promise<boolean> => {
+    const refreshToken = useCallback(async (): Promise<boolean> => {
         try {
             const refreshTokenValue = TokenManager.getRefreshToken();
             if (!refreshTokenValue) {
@@ -152,7 +121,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
             logout();
             return false;
         }
+    }, [logout]);
+
+    // Auto refresh token when it's about to expire
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        const checkTokenExpiry = () => {
+            if (TokenManager.isAccessTokenExpired()) {
+                refreshToken();
+            }
+        };
+
+        // Check every 5 minutes
+        const interval = setInterval(checkTokenExpiry, 5 * 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, [isAuthenticated, refreshToken]);
+
+    const login = (tokens: JWTTokens) => {
+        try {
+            TokenManager.setTokens(tokens);
+            const userInfo = TokenManager.getUserInfo();
+
+            setUser(userInfo);
+            setIsAuthenticated(true);
+
+            toast.success('Login successful!');
+        } catch (error) {
+            console.error('Login error:', error);
+            toast.error('Login failed');
+        }
     };
+
+
 
     const value: AuthContextType = {
         user,

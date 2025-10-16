@@ -9,7 +9,7 @@ import { useGetCommitteesQuery } from "@/lib/api/contestApi";
 
 type CommitteeItem = {
     year: string;
-    image: any;
+    image: string;
     isCurrent?: boolean;
 };
 
@@ -26,7 +26,6 @@ function CommitteeSlider({ items, label }: { items: CommitteeItem[]; label: stri
         return () => clearTimeout(id);
     }, [index, items, current]);
 
-    const goTo = (i: number) => setIndex(i);
     const next = () => setIndex((prev) => (prev + 1) % items.length);
     const prev = () => setIndex((prev) => (prev - 1 + items.length) % items.length);
 
@@ -87,7 +86,7 @@ function CommitteeSlider({ items, label }: { items: CommitteeItem[]; label: stri
 }
 
 export default function CommitteeSection() {
-    const { data: committees = [], isLoading } = useGetCommitteesQuery();
+    const { data: committees = [] } = useGetCommitteesQuery();
 
     const advisoryItems: CommitteeItem[] = useMemo(() => {
         return committees

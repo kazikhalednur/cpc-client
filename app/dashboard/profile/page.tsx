@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/nextAuthClient";
 import Image from "next/image";
 import {
   FiEdit2,
@@ -11,7 +11,6 @@ import {
   FiLinkedin,
   FiCode,
   FiUser,
-  FiMail,
   FiBook,
 } from "react-icons/fi";
 import { motion } from "framer-motion";

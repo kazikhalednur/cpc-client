@@ -34,7 +34,7 @@ const committeeStats = [
 ];
 
 export default function CommitteePage() {
-    const { data: committees = [], isLoading } = useGetCommitteesQuery();
+    const { data: committees = [] } = useGetCommitteesQuery();
 
     // Get the latest committee (current year)
     const currentCommittee = committees.length > 0 ? committees[0] : null;

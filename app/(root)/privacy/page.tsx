@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Navigation } from "@/app/components/Navigation";
-import { Footer } from "@/app/components/Footer";
 
 export default function PrivacyPolicy() {
     const { theme } = useTheme();
@@ -140,7 +139,7 @@ export default function PrivacyPolicy() {
                                 <div className={`space-y-4 ${mounted && theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
                                     <p>
                                         We may update this Privacy Policy from time to time. We will notify you of any changes
-                                        by posting the new Privacy Policy on this page and updating the "Last updated" date.
+                                        by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date.
                                     </p>
                                 </div>
                             </section>

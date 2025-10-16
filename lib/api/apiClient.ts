@@ -90,7 +90,7 @@ class ApiClient {
         return this.handleResponse<T>(response);
     }
 
-    async post<T>(endpoint: string, data?: any, includeAuth = true): Promise<T> {
+    async post<T>(endpoint: string, data?: unknown, includeAuth = true): Promise<T> {
         const response = await fetch(`${this.baseURL}${endpoint}`, {
             method: 'POST',
             headers: await this.getHeaders(includeAuth),
@@ -100,7 +100,7 @@ class ApiClient {
         return this.handleResponse<T>(response);
     }
 
-    async put<T>(endpoint: string, data?: any, includeAuth = true): Promise<T> {
+    async put<T>(endpoint: string, data?: unknown, includeAuth = true): Promise<T> {
         const response = await fetch(`${this.baseURL}${endpoint}`, {
             method: 'PUT',
             headers: await this.getHeaders(includeAuth),
@@ -110,7 +110,7 @@ class ApiClient {
         return this.handleResponse<T>(response);
     }
 
-    async patch<T>(endpoint: string, data?: any, includeAuth = true): Promise<T> {
+    async patch<T>(endpoint: string, data?: unknown, includeAuth = true): Promise<T> {
         const response = await fetch(`${this.baseURL}${endpoint}`, {
             method: 'PATCH',
             headers: await this.getHeaders(includeAuth),

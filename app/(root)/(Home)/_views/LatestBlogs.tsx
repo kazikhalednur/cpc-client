@@ -5,6 +5,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { useGetBlogsQuery } from "@/lib/api/blogApi";
+type LatestBlogItem = {
+    id: string;
+    title: string;
+    slug: string;
+    author: string;
+    date: string;
+    readTime: string;
+    excerpt: string;
+    image: string;
+};
 
 const LatestBlogs = () => {
     const { theme } = useTheme();
@@ -35,7 +45,7 @@ const LatestBlogs = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {(blogsData?.results || []).slice(0, 3).map((post: any) => (
+                    {(blogsData?.results || []).slice(0, 3).map((post: LatestBlogItem) => (
                         <div
                             key={post.id}
                             className={`${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg" : "bg-white/80 backdrop-blur-lg"} rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 

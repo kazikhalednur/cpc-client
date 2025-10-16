@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { useGetContestByIdQuery } from "@/lib/api/contestApi";
 import {
     FiCalendar,
@@ -17,7 +17,7 @@ import {
     FiCheckCircle,
     FiXCircle,
     FiAlertCircle,
-    FiCode,
+    // FiCode,
     FiTrophy,
     FiStar,
 } from "react-icons/fi";
@@ -25,7 +25,8 @@ export default function ContestDetailPage() {
     const params = useParams();
     const id = useMemo(() => (Array.isArray(params.id) ? params.id[0] : params.id) as string, [params.id]);
     const { data: contest, isLoading } = useGetContestByIdQuery(id, { skip: !id });
-    const participants: any[] = [];
+    type Participant = { id: string; name: string; registeredAt: string };
+    const participants: Participant[] = [];
 
     const getDifficultyColor = (difficulty: string) => {
         switch (difficulty) {
@@ -106,7 +107,7 @@ export default function ContestDetailPage() {
                             Contest Not Found
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400 mb-8">
-                            The contest you're looking for doesn't exist or has been removed.
+                            The contest you&apos;re looking for doesn&apos;t exist or has been removed.
                         </p>
                         <Link
                             href="/contests"
@@ -183,16 +184,16 @@ export default function ContestDetailPage() {
                                             </span>
                                         </div>
 
-                                        {(contest as any).shortDescription && (
+                                        {(contest as unknown as { shortDescription?: string }).shortDescription && (
                                             <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
-                                                {(contest as any).shortDescription}
+                                                {(contest as unknown as { shortDescription?: string }).shortDescription}
                                             </p>
                                         )}
 
-                                        {(contest as any).rawHtmlDescription ? (
+                                        {(contest as unknown as { rawHtmlDescription?: string }).rawHtmlDescription ? (
                                             <div
                                                 className="prose prose-indigo dark:prose-invert max-w-none mb-8"
-                                                dangerouslySetInnerHTML={{ __html: (contest as any).rawHtmlDescription as string }}
+                                                dangerouslySetInnerHTML={{ __html: (contest as unknown as { rawHtmlDescription: string }).rawHtmlDescription }}
                                             />
                                         ) : (
                                             <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-8">
@@ -206,7 +207,7 @@ export default function ContestDetailPage() {
                                                 <FiUsers className="w-8 h-8 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
                                                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                                                     {contest.participants}
-                                                    {(contest as any).maxParticipants ? ` / ${(contest as any).maxParticipants}` : ""}
+                                                    {(contest as unknown as { maxParticipants?: number }).maxParticipants ? ` / ${(contest as unknown as { maxParticipants?: number }).maxParticipants}` : ""}
                                                 </div>
                                                 <div className="text-sm text-gray-600 dark:text-gray-400">
                                                     Participants
@@ -224,9 +225,9 @@ export default function ContestDetailPage() {
                                             <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                                 <FiAward className="w-8 h-8 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
                                                 <div className="text-lg font-bold text-gray-900 dark:text-white">
-                                                    {Array.isArray((contest as any).prizes) && (contest as any).prizes.length > 0
-                                                        ? `${(contest as any).prizes.length} prize${(contest as any).prizes.length > 1 ? "s" : ""}`
-                                                        : (contest as any).prize || "No prizes listed"}
+                                                    {Array.isArray((contest as unknown as { prizes?: unknown[]; prize?: string }).prizes) && (contest as unknown as { prizes?: unknown[] }).prizes!.length > 0
+                                                        ? `${(contest as unknown as { prizes: unknown[] }).prizes.length} prize${(contest as unknown as { prizes: unknown[] }).prizes.length > 1 ? "s" : ""}`
+                                                        : (contest as unknown as { prize?: string }).prize || "No prizes listed"}
                                                 </div>
                                                 <div className="text-sm text-gray-600 dark:text-gray-400">
                                                     Prize
@@ -234,14 +235,14 @@ export default function ContestDetailPage() {
                                             </div>
                                         </div>
 
-                                        {Array.isArray((contest as any).prizes) && (contest as any).prizes.length > 0 && (
+                                        {Array.isArray((contest as unknown as { prizes?: Array<{ position?: string; prize?: string; title?: string }> }).prizes) && (contest as unknown as { prizes: Array<{ position?: string; prize?: string; title?: string }> }).prizes.length > 0 && (
                                             <div className="mb-8">
                                                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
                                                     <FiTrophy className="w-5 h-5 mr-2 text-yellow-500" />
                                                     Prizes
                                                 </h3>
                                                 <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                                                    {(contest as any).prizes.map((p: any, idx: number) => (
+                                                    {(contest as unknown as { prizes: Array<{ position?: string; prize?: string; title?: string }> }).prizes.map((p, idx: number) => (
                                                         <li key={idx}>
                                                             {p.position ? `${p.position}: ` : ""}{p.prize || p.title || JSON.stringify(p)}
                                                         </li>
@@ -284,7 +285,7 @@ export default function ContestDetailPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                        {(contest as any).registrationDeadline && (
+                                        {(contest as unknown as { registrationDeadline?: string }).registrationDeadline && (
                                             <div className="flex items-start space-x-3">
                                                 <FiCalendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400 mt-1" />
                                                 <div>
@@ -292,7 +293,7 @@ export default function ContestDetailPage() {
                                                         Registration Deadline
                                                     </div>
                                                     <div className="text-sm text-gray-600 dark:text-gray-400">
-                                                        {formatDate((contest as any).registrationDeadline)}
+                                                        {formatDate((contest as unknown as { registrationDeadline: string }).registrationDeadline)}
                                                     </div>
                                                 </div>
                                             </div>
@@ -328,17 +329,17 @@ export default function ContestDetailPage() {
                                         </div>
                                     </div>
 
-                                    {(contest as any).organizer && (
+                                    {(contest as unknown as { organizer?: string }).organizer && (
                                         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                             <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">Organizer</div>
-                                            <div className="text-sm text-gray-600 dark:text-gray-400">{(contest as any).organizer}</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-400">{(contest as unknown as { organizer: string }).organizer}</div>
                                         </div>
                                     )}
 
                                     {/* External Link */}
                                     <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-600">
                                         <a
-                                            href={(contest as any).platformLink || `https://${contest.platform.toLowerCase()}.com`}
+                                            href={(contest as unknown as { platformLink?: string }).platformLink || `https://${contest.platform.toLowerCase()}.com`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300 flex items-center justify-center"
@@ -348,10 +349,10 @@ export default function ContestDetailPage() {
                                         </a>
                                     </div>
 
-                                    {(contest as any).registrationLink && (
+                                    {(contest as unknown as { registrationLink?: string }).registrationLink && (
                                         <div className="mt-4">
                                             <a
-                                                href={(contest as any).registrationLink}
+                                                href={(contest as unknown as { registrationLink: string }).registrationLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center"

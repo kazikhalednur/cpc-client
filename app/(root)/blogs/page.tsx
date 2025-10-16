@@ -16,7 +16,7 @@ export default function BlogList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const { data: apiCategories } = useGetBlogCategoriesQuery();
-    const { data: blogsData, isLoading: isBlogsLoading } = useGetBlogsQuery({
+    const { data: blogsData } = useGetBlogsQuery({
         page: currentPage,
         page_size: 6,
         category: selectedCategory !== 'All' ? (apiCategories?.find(c => c.title === selectedCategory)?.slug || undefined) : undefined,
@@ -49,30 +49,7 @@ export default function BlogList() {
         return null;
     }
 
-    const AuthorAvatar = ({ src, alt, size = 20 }: { src?: string; alt: string; size?: number }) => {
-        const [error, setError] = useState(false);
-        if (!src || error) {
-            return (
-                <div
-                    className={`rounded-full flex items-center justify-center ${theme === "dark" ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-600"}`}
-                    style={{ width: size, height: size }}
-                    aria-label={alt}
-                >
-                    <FiUser size={Math.max(12, Math.floor(size * 0.7))} />
-                </div>
-            );
-        }
-        return (
-            <Image
-                src={src}
-                alt={alt}
-                width={size}
-                height={size}
-                className="rounded-full"
-                onError={() => setError(true)}
-            />
-        );
-    };
+    // Avatar component removed as it was unused
 
     return (
         <div className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"}`}>

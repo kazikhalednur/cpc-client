@@ -50,10 +50,17 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
+import type { BaseQueryApi, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
+const baseQueryWithReauth = async (
+    args: string | FetchArgs,
+    api: BaseQueryApi,
+    extraOptions: Record<string, unknown>
+) => {
     let result = await baseQuery(args, api, extraOptions);
 
-    if (result.error && result.error.status === 401) {
+    const error = result.error as FetchBaseQueryError | undefined;
+    if (error && error.status === 401) {
         // Try to get a new token
         const refreshToken = TokenManager.getRefreshToken();
         if (refreshToken) {
@@ -75,7 +82,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
                 result = await baseQuery(args, api, extraOptions);
             } else {
                 TokenManager.clearTokens();
-                window.location.href = '/auth/signin';
+                if (typeof window !== 'undefined') window.location.href = '/auth/signin';
             }
         }
     }

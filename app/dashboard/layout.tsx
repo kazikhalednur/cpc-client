@@ -1,22 +1,14 @@
-import { getServerSession } from "next-auth";
+// Auth server session and route were removed. Adjust or re-add when backend is restored.
 import { redirect } from "next/navigation";
-import { authOptions } from "../api/auth/[...nextauth]/route";
 import { Sidebar } from "./_components/Sidebar";
 import { DashboardHeader } from "./_components/DashboardHeader";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-
-  if (
-    !session?.user?.role ||
-    !["SUPER_ADMIN", "ADMIN"].includes(session.user.role)
-  ) {
-    redirect("/");
-  }
+  // TODO: Add client-side guard or public-only dashboard if needed
 
   return (
     <div className="h-screen flex dark:bg-gray-900">

@@ -9,7 +9,6 @@ import { Navigation } from "@/app/components/Navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
     FiCalendar,
-    FiUser,
     FiClock,
     FiArrowLeft,
     FiShare2,
@@ -40,8 +39,8 @@ export default function BlogDetail() {
     }, []);
     const { isAuthenticated } = useAuth();
     const { data: post, isLoading, refetch } = useGetBlogBySlugQuery(slug, { refetchOnMountOrArgChange: true, refetchOnFocus: true, refetchOnReconnect: true });
-    const [likeBlog, { isLoading: isLiking }] = useLikeBlogMutation();
-    const [bookmarkBlog, { isLoading: isBookmarking }] = useBookmarkBlogMutation();
+    const [likeBlog] = useLikeBlogMutation();
+    const [bookmarkBlog] = useBookmarkBlogMutation();
 
     useEffect(() => {
         if (post) {
@@ -158,7 +157,7 @@ export default function BlogDetail() {
                                         const res = await likeBlog({ slug }).unwrap();
                                         setLiked(res.liked);
                                         setLikesCount(res.likes);
-                                    } catch (e) {
+                                    } catch (_e) {
                                         // ignore for now or show toast
                                     }
                                 }}
@@ -179,7 +178,7 @@ export default function BlogDetail() {
                                         const res = await bookmarkBlog({ slug }).unwrap();
                                         setBookmarked(res.bookmarked);
                                         setBookmarksCount(res.bookmarks);
-                                    } catch (e) {
+                                    } catch (_e) {
                                         // ignore for now or show toast
                                     }
                                 }}

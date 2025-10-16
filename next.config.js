@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      "media.istockphoto.com",
-      "images.unsplash.com",
-      "localhost",
-      "127.0.0.1",
-      "res.cloudinary.com", // If you're using Cloudinary
-      "storage.googleapis.com", // If you're using Google Cloud Storage
-      "lh3.googleusercontent.com",
+    remotePatterns: [
+      { protocol: "https", hostname: "media.istockphoto.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "http", hostname: "localhost" },
+      { protocol: "http", hostname: "127.0.0.1" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "storage.googleapis.com" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
 };

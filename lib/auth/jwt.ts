@@ -67,6 +67,9 @@ export class TokenManager {
         try {
             const decoded = this.decodeToken(token);
             const currentTime = Math.floor(Date.now() / 1000);
+            if (!decoded || typeof decoded.exp !== 'number') {
+                return true;
+            }
             return decoded.exp < currentTime;
         } catch {
             return true;

@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/nextAuthClient";
 import { useTheme } from "next-themes";
 
 export default function HeroSection() {
@@ -38,7 +38,7 @@ export default function HeroSection() {
     animate(contestsCount, 50, { duration: 2, ease: "easeOut" });
     animate(participantsCount, 1000, { duration: 2, ease: "easeOut" });
     animate(winnersCount, 100, { duration: 2, ease: "easeOut" });
-  }, []);
+  }, [contestsCount, participantsCount, winnersCount]);
 
   return (
     <div className={`relative h-screen overflow-hidden ${mounted && theme === "dark" ? "bg-[#0A0A0A]" : "bg-gradient-to-br from-gray-50 to-gray-100"}`}>

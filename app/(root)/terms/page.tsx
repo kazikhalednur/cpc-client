@@ -160,7 +160,7 @@ export default function TermsOfService() {
                                 </h2>
                                 <div className={`space-y-4 ${mounted && theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
                                     <p>
-                                        The service is provided on an "AS IS" and "AS AVAILABLE" basis.
+                                        The service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis.
                                         We make no warranties, expressed or implied, and hereby disclaim
                                         all other warranties including, without limitation, implied warranties
                                         or conditions of merchantability, fitness for a particular purpose,

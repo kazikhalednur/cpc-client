@@ -117,7 +117,7 @@ const EventsSlider = () => {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full" />
             <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Don't miss out on our exciting events and workshops
+              Don&apos;t miss out on our exciting events and workshops
             </p>
           </div>
           <div className="flex justify-center items-center h-64">
@@ -139,7 +139,7 @@ const EventsSlider = () => {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full" />
             <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Don't miss out on our exciting events and workshops
+              Don&apos;t miss out on our exciting events and workshops
             </p>
           </div>
           <div className="flex justify-center items-center h-64">
@@ -174,7 +174,7 @@ const EventsSlider = () => {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full" />
             <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Don't miss out on our exciting events and workshops
+              Don&apos;t miss out on our exciting events and workshops
             </p>
           </div>
           <div className="flex justify-center items-center h-64">
@@ -196,7 +196,7 @@ const EventsSlider = () => {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full" />
           <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Don't miss out on our exciting events and workshops
+            Don&apos;t miss out on our exciting events and workshops
           </p>
         </div>
 

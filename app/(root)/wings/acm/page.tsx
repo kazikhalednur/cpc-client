@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
 import { FiAward, FiCode, FiUsers, FiCalendar, FiBook, FiArrowLeft, FiExternalLink } from "react-icons/fi";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ACMTaskForcePage() {

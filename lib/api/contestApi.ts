@@ -38,7 +38,7 @@ export type ContestDetailResponse = {
         registration_link?: string;
         registration_deadline?: string;
         organizer?: string;
-        prizes?: any[];
+        prizes?: unknown[];
         created_at?: string;
         updated_at?: string;
         published_at?: string;
@@ -78,7 +78,11 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
+const baseQueryWithReauth = async (
+    args: Parameters<typeof baseQuery>[0],
+    api: Parameters<typeof baseQuery>[1],
+    extraOptions: Parameters<typeof baseQuery>[2]
+) => {
     let result = await baseQuery(args, api, extraOptions);
     if (result.error && result.error.status === 401) {
         const refreshToken = TokenManager.getRefreshToken();
@@ -178,7 +182,7 @@ export const contestApi = createApi({
                 registrationLink?: string;
                 registrationDeadline?: string;
                 organizer?: string;
-                prizes?: any[];
+                prizes?: unknown[];
                 createdAt?: string;
                 updatedAt?: string;
                 publishedAt?: string;
@@ -201,17 +205,17 @@ export const contestApi = createApi({
                     prize: d.prize,
                     image: d.image,
                     status: d.status,
-                    participants: typeof d.participants === 'string' ? parseInt(d.participants as any, 10) || 0 : (d.participants as any) || 0,
+                    participants: typeof d.participants === 'string' ? parseInt(d.participants, 10) || 0 : (d.participants ?? 0),
                     shortDescription: d.short_description,
-                    platformLink: (d as any).platform_link,
-                    maxParticipants: (d as any).max_participants,
-                    registrationLink: (d as any).registration_link,
-                    registrationDeadline: (d as any).registration_deadline,
-                    organizer: (d as any).organizer,
-                    prizes: (d as any).prizes,
-                    createdAt: (d as any).created_at,
-                    updatedAt: (d as any).updated_at,
-                    publishedAt: (d as any).published_at,
+                    platformLink: d.platform_link,
+                    maxParticipants: d.max_participants,
+                    registrationLink: d.registration_link,
+                    registrationDeadline: d.registration_deadline,
+                    organizer: d.organizer,
+                    prizes: d.prizes,
+                    createdAt: d.created_at,
+                    updatedAt: d.updated_at,
+                    publishedAt: d.published_at,
                 };
             },
         }),

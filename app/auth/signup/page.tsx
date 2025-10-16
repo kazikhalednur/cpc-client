@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,22 +20,7 @@ export default function SignUp() {
   const [googleSignup, { isLoading: isGoogleSignupLoading }] = useGoogleSignupMutation();
   const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  // Restore student ID from localStorage and handle Google OAuth callback
-  useEffect(() => {
-    const savedStudentId = localStorage.getItem('pending_student_id');
-    if (savedStudentId) {
-      setStudentId(savedStudentId);
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code && (studentId || savedStudentId)) {
-      handleGoogleCallback(code);
-    }
-  }, [studentId]);
-
-  const handleGoogleCallback = async (code: string) => {
+  const handleGoogleCallback = useCallback(async (code: string) => {
     try {
       setIsLoading(true);
       const currentStudentId = studentId || localStorage.getItem('pending_student_id') || '';
@@ -69,30 +54,48 @@ export default function SignUp() {
       } else {
         toast.error(result.message || 'Signup failed');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google signup error details:', {
         error,
-        message: error?.message,
-        data: error?.data,
-        status: error?.status,
-        originalStatus: error?.originalStatus
+        message: (error as { message?: string } | undefined)?.message,
+        data: (error as { data?: unknown } | undefined)?.data,
+        status: (error as { status?: number } | undefined)?.status,
+        originalStatus: (error as { originalStatus?: number } | undefined)?.originalStatus
       });
 
       let errorMessage = 'Signup failed. Please try again.';
 
-      if (error?.data?.message) {
-        errorMessage = error.data.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      } else if (error?.status) {
-        errorMessage = `Server error (${error.status}). Please try again.`;
+      const e = error as { data?: { message?: string }; message?: string; status?: number } | undefined;
+
+      if (e?.data?.message) {
+        errorMessage = e.data.message;
+      } else if (e?.message) {
+        errorMessage = e.message;
+      } else if (e?.status) {
+        errorMessage = `Server error (${e.status}). Please try again.`;
       }
 
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [googleSignup, login, router, studentId]);
+
+  // Restore student ID from localStorage and handle Google OAuth callback
+  useEffect(() => {
+    const savedStudentId = localStorage.getItem('pending_student_id');
+    if (savedStudentId) {
+      setStudentId(savedStudentId);
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code && (studentId || savedStudentId)) {
+      handleGoogleCallback(code);
+    }
+  }, [studentId, handleGoogleCallback]);
+
 
   const handleGoogleSignUp = async () => {
     if (!studentId.trim()) {
@@ -105,12 +108,17 @@ export default function SignUp() {
       // Store student ID for callback
       localStorage.setItem('pending_student_id', studentId);
 
+      if (!CLIENT_ID) {
+        toast.error('Google Client ID is not configured');
+        return;
+      }
+
       // Generate redirect URI on client side
       const redirectUri = `${window.location.origin}/auth/signup`;
 
       const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
 
-      const options = {
+      const options: Record<string, string> = {
         client_id: CLIENT_ID,
         redirect_uri: redirectUri,
         response_type: 'code',

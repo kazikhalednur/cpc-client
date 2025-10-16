@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Role } from "@prisma/client";
+import { Role } from "@/types/role";
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });

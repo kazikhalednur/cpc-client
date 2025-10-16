@@ -1,18 +1,14 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/nextAuthClient";
 import { useRole } from "@/hooks/useRole";
 import { Role } from "@/types/role";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
 import { AuthGuard } from "@/lib/auth/AuthGuard";
 import {
   FiUsers,
   FiCalendar,
   FiAward,
-  FiTrendingUp,
-  FiClock,
-  FiPlus,
 } from "react-icons/fi";
 import Link from "next/link";
 import { LoadingSpinner } from "../components/LoadingSpinner";
@@ -102,7 +98,7 @@ export default function DashboardPage() {
             Welcome back, {session?.user?.name}!
           </h1>
           <p className="text-indigo-100">
-            Here's what's happening in your dashboard today.
+            Here&apos;s what&apos;s happening in your dashboard today.
           </p>
         </div>
 

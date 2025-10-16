@@ -1,7 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,17 +17,7 @@ export default function SignIn() {
   const [googleLogin, { isLoading: isGoogleLoginLoading }] = useGoogleLoginMutation();
   const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  // Handle Google OAuth callback
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code) {
-      handleGoogleCallback(code);
-    }
-  }, []);
-
-  const handleGoogleCallback = async (code: string) => {
+  const handleGoogleCallback = useCallback(async (code: string) => {
     try {
       setIsLoading(true);
 
@@ -51,30 +40,44 @@ export default function SignIn() {
       } else {
         toast.error(result.message || 'Login failed');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google login error details:', {
         error,
-        message: error?.message,
-        data: error?.data,
-        status: error?.status,
-        originalStatus: error?.originalStatus
+        // Narrow unknown error progressively
+        message: (error as { message?: string } | undefined)?.message,
+        data: (error as { data?: unknown } | undefined)?.data,
+        status: (error as { status?: number } | undefined)?.status,
+        originalStatus: (error as { originalStatus?: number } | undefined)?.originalStatus
       });
 
       let errorMessage = 'Login failed. Please try again.';
 
-      if (error?.data?.message) {
-        errorMessage = error.data.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      } else if (error?.status) {
-        errorMessage = `Server error (${error.status}). Please try again.`;
+      const e = error as { data?: { message?: string }; message?: string; status?: number } | undefined;
+
+      if (e?.data?.message) {
+        errorMessage = e.data.message;
+      } else if (e?.message) {
+        errorMessage = e.message;
+      } else if (e?.status) {
+        errorMessage = `Server error (${e.status}). Please try again.`;
       }
 
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [googleLogin, login, router]);
+
+  // Handle Google OAuth callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+      handleGoogleCallback(code);
+    }
+  }, [handleGoogleCallback]);
+
 
   const handleGoogleSignIn = async () => {
     try {
@@ -145,7 +148,7 @@ export default function SignIn() {
             )}
           </button>
           <div className="text-sm text-black text-center">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"
               className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200"

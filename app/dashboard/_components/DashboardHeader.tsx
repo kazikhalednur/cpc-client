@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "@/lib/auth/nextAuthClient";
 import Image from "next/image";
 import { FiBell, FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "next-themes";

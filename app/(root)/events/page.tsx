@@ -9,11 +9,10 @@ import {
   FiClock,
   FiMapPin,
   FiSearch,
-  FiFilter,
   FiChevronLeft,
   FiChevronRight,
 } from "react-icons/fi";
-import { Event, EventApiResponse } from "@/types/event";
+import { Event } from "@/types/event";
 import { eventApi } from "@/lib/api/eventApi";
 import { LoadingSpinner } from "@/app/components/LoadingSpinner";
 import Countdown from "react-countdown";
@@ -52,7 +51,7 @@ export default function EventsPage() {
         setError(null);
 
         // Prepare query parameters
-        const params: any = {
+        const params: NonNullable<Parameters<typeof eventApi.getEvents>[0]> = {
           page: currentPage,
           page_size: pageSize,
         };
@@ -304,8 +303,8 @@ export default function EventsPage() {
                           key={page}
                           onClick={() => handlePageChange(page)}
                           className={`px-3 py-2 text-sm font-medium rounded-lg ${currentPage === page
-                              ? "text-white bg-indigo-600 border border-indigo-600"
-                              : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            ? "text-white bg-indigo-600 border border-indigo-600"
+                            : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                             }`}
                         >
                           {page}

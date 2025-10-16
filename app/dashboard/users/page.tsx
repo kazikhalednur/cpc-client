@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRole } from "@/hooks/useRole";
-import { Role } from "@prisma/client";
-import { FiEdit2, FiSave, FiX, FiTrash2 } from "react-icons/fi";
+import { Role } from "@/types/role";
+import { FiEdit2, FiX, FiTrash2 } from "react-icons/fi";
 
 interface User {
   id: string;
@@ -153,13 +153,12 @@ export default function ManageUsers() {
                   ) : (
                     <span
                       className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                      ${
-                        user.role === Role.SUPER_ADMIN
+                      ${user.role === Role.SUPER_ADMIN
                           ? "bg-purple-100 text-purple-800"
                           : user.role === Role.ADMIN
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
                     >
                       {user.role}
                     </span>

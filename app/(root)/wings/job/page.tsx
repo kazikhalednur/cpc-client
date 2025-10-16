@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
+import Image from "next/image";
 import { FiBriefcase, FiUsers, FiTrendingUp, FiTarget, FiArrowLeft, FiExternalLink, FiCalendar, FiAward } from "react-icons/fi";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function JobCareerPage() {
@@ -120,7 +120,7 @@ export default function JobCareerPage() {
                                 <div>
                                     <h1 className="text-4xl font-bold mb-2">Job Career & Industry Collaboration</h1>
                                     <p className="text-orange-100 text-lg">
-                                        Let's learn how to build a better and more skilled career
+                                        Let&apos;s learn how to build a better and more skilled career
                                     </p>
                                 </div>
                             </div>
@@ -227,9 +227,11 @@ export default function JobCareerPage() {
                             >
                                 <div className="text-center mb-4">
                                     <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden">
-                                        <img
+                                        <Image
                                             src={story.image}
                                             alt={story.name}
+                                            width={80}
+                                            height={80}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
@@ -244,7 +246,7 @@ export default function JobCareerPage() {
                                     </p>
                                 </div>
                                 <p className="text-gray-600 dark:text-gray-300 text-sm italic">
-                                    "{story.story}"
+                                    &quot;{story.story}&quot;
                                 </p>
                             </motion.div>
                         ))}

@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
 import SessionProvider from "./providers/SessionProvider";
 import { ReduxProvider } from "./providers/ReduxProvider";
 import { AuthProvider } from "@/lib/auth/AuthContext";
@@ -14,13 +12,11 @@ export const metadata: Metadata = {
     "DIU CPC is the most primitive and extensive club as well as the biggest club in Daffodil International University. We work together to explore every field of Computer Science",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
@@ -32,7 +28,7 @@ export default async function RootLayout({
         >
           <ReduxProvider>
             <AuthProvider>
-              <SessionProvider session={session}>
+              <SessionProvider session={undefined}>
                 {children}
                 <Toaster position="top-right" />
               </SessionProvider>

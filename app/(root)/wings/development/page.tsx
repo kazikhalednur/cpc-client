@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
 import { FiCode, FiGitBranch, FiMonitor, FiSmartphone, FiArrowLeft, FiExternalLink, FiUsers, FiCalendar } from "react-icons/fi";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function DevelopmentPage() {

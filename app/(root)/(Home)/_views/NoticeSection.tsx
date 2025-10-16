@@ -8,7 +8,7 @@ const NoticeSection = () => {
   const [theme] = useState<"light" | "dark">("light");
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadNotices();
@@ -143,7 +143,7 @@ const NoticeSection = () => {
                 }}
                 className="whitespace-nowrap flex items-center gap-8 absolute"
               >
-                {notices.map((notice, index) => (
+                {notices.map((notice) => (
                   <Link
                     key={notice.id}
                     href={`/notices/${notice.id}`}
@@ -159,7 +159,7 @@ const NoticeSection = () => {
                   </Link>
                 ))}
                 {/* Duplicate the notices for seamless loop */}
-                {notices.map((notice, index) => (
+                {notices.map((notice) => (
                   <Link
                     key={`${notice.id}-duplicate`}
                     href={`/notices/${notice.id}`}
