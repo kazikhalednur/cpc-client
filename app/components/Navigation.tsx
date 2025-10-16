@@ -91,7 +91,9 @@ export const Navigation = () => {
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
                          ${isScrolled
                     ? "text-gray-800 hover:text-gray-900 hover:bg-gray-100"
-                    : "text-white hover:text-white/90 hover:bg-white/10"
+                    : (theme === "dark"
+                      ? "text-white hover:text-white/90 hover:bg-white/10"
+                      : "text-gray-800 hover:text-gray-900 hover:bg-gray-100/60")
                   }`}
               >
                 {item.label}
@@ -105,7 +107,7 @@ export const Navigation = () => {
                 className={`p-2 rounded-full transition-all duration-200
                          ${isScrolled
                     ? "text-gray-800 hover:bg-gray-100"
-                    : "text-white hover:bg-white/10"
+                    : (theme === "dark" ? "text-white hover:bg-white/10" : "text-gray-800 hover:bg-gray-100/60")
                   }`}
                 aria-label="Toggle theme"
               >
@@ -147,7 +149,7 @@ export const Navigation = () => {
               className={`p-2 rounded-md transition-all duration-200
                        ${isScrolled
                   ? "text-gray-800 hover:bg-gray-100"
-                  : "text-white hover:bg-white/10"
+                  : (theme === "dark" ? "text-white hover:bg-white/10" : "text-gray-800 hover:bg-gray-100/60")
                 }`}
             >
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}

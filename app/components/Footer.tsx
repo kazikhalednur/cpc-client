@@ -36,8 +36,8 @@ export function Footer() {
     ];
 
     const wings = [
-        { name: "Development Wing", href: "/wings/development" },
         { name: "ACM Task Force", href: "/wings/acm" },
+        { name: "Development Wing", href: "/wings/development" },
         { name: "Research & Journal", href: "/wings/research" },
         { name: "Job Career & Industry Collaboration", href: "/wings/job" },
     ];
@@ -55,7 +55,7 @@ export function Footer() {
     const contactInfo = [
         {
             icon: FiMapPin,
-            text: "Room 311, Knowledge Tower, Daffodil International University",
+            text: "Room KT-311, Knowledge Tower, Daffodil International University",
         },
         // {
         //     icon: FiPhone,
