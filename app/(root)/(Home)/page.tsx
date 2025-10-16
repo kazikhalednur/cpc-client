@@ -64,7 +64,7 @@ export default function Home() {
               title="Blog"
               icon="✍️"
               description="Technical articles & editorials"
-              link="/blog"
+              link="/blogs"
             />
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function Home() {
           {/* View All Button */}
           <div className="text-center mt-12">
             <a
-              href="/blog"
+              href="/blogs"
               className={`inline-flex items-center px-6 py-3 rounded-full ${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/15 hover:border-white/30" : "bg-white/80 backdrop-blur-lg border border-gray-200 text-gray-900 hover:bg-white hover:border-gray-300"} font-medium transition-all duration-300 hover:scale-105 group`}
             >
               View All Posts
