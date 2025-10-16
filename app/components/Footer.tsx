@@ -22,6 +22,11 @@ export function Footer() {
     const [currentYear, setCurrentYear] = useState(2024);
     const [isClient, setIsClient] = useState(false);
     const { theme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         setCurrentYear(new Date().getFullYear());
@@ -70,7 +75,7 @@ export function Footer() {
     ];
 
     return (
-        <footer className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} transition-colors duration-300`}>
+        <footer className={`${mounted && theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} transition-colors duration-300`}>
             {/* Main Footer Content */}
             <div className="container mx-auto px-4 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -95,11 +100,11 @@ export function Footer() {
                                     )}
                                 </div>
                                 <div>
-                                    <h3 className={`text-xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>DIU CPC</h3>
-                                    <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Computer Programming Club</p>
+                                    <h3 className={`text-xl font-bold ${mounted && theme === "dark" ? "text-white" : "text-gray-900"}`}>DIU CPC</h3>
+                                    <p className={`text-sm ${mounted && theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Computer Programming Club</p>
                                 </div>
                             </Link>
-                            <p className={`text-sm leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                            <p className={`text-sm leading-relaxed ${mounted && theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                 The most primitive and extensive club as well as the biggest club in Daffodil International University.
                                 We work together to explore every field of Computer Science.
                             </p>
@@ -107,7 +112,7 @@ export function Footer() {
 
                         {/* Social Links */}
                         <div>
-                            <h4 className={`text-lg font-semibold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Follow Us</h4>
+                            <h4 className={`text-lg font-semibold mb-4 ${mounted && theme === "dark" ? "text-white" : "text-gray-900"}`}>Follow Us</h4>
                             <div className="flex space-x-4">
                                 {socialLinks.map((social) => (
                                     <a
@@ -115,7 +120,7 @@ export function Footer() {
                                         href={social.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`p-2 ${theme === "dark" ? "bg-gray-800" : "bg-gray-200"} rounded-lg transition-colors duration-300 hover:scale-110 ${social.color}`}
+                                        className={`p-2 ${mounted && theme === "dark" ? "bg-gray-800" : "bg-gray-200"} rounded-lg transition-colors duration-300 hover:scale-110 ${social.color}`}
                                     >
                                         <social.icon className="w-5 h-5" />
                                     </a>
@@ -126,13 +131,13 @@ export function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h4 className={`text-lg font-semibold mb-6 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Quick Links</h4>
+                        <h4 className={`text-lg font-semibold mb-6 ${mounted && theme === "dark" ? "text-white" : "text-gray-900"}`}>Quick Links</h4>
                         <ul className="space-y-3">
                             {quickLinks.map((link) => (
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className={`${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300 flex items-center group`}
+                                        className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300 flex items-center group`}
                                     >
                                         <span className="group-hover:translate-x-1 transition-transform duration-300">
                                             {link.name}
@@ -146,13 +151,13 @@ export function Footer() {
 
                     {/* Wings */}
                     <div>
-                        <h4 className={`text-lg font-semibold mb-6 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Our Wings</h4>
+                        <h4 className={`text-lg font-semibold mb-6 ${mounted && theme === "dark" ? "text-white" : "text-gray-900"}`}>Our Wings</h4>
                         <ul className="space-y-3">
                             {wings.map((wing) => (
                                 <li key={wing.name}>
                                     <Link
                                         href={wing.href}
-                                        className={`${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300 flex items-center group`}
+                                        className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300 flex items-center group`}
                                     >
                                         <span className="group-hover:translate-x-1 transition-transform duration-300">
                                             {wing.name}
@@ -166,12 +171,12 @@ export function Footer() {
 
                     {/* Contact Info */}
                     <div>
-                        <h4 className={`text-lg font-semibold mb-6 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Contact Info</h4>
+                        <h4 className={`text-lg font-semibold mb-6 ${mounted && theme === "dark" ? "text-white" : "text-gray-900"}`}>Contact Info</h4>
                         <div className="space-y-4">
                             {contactInfo.map((contact, index) => (
                                 <div key={index} className="flex items-start space-x-3">
-                                    <contact.icon className={`w-5 h-5 ${theme === "dark" ? "text-indigo-400" : "text-indigo-600"} mt-0.5 flex-shrink-0`} />
-                                    <span className={`text-sm leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                    <contact.icon className={`w-5 h-5 ${mounted && theme === "dark" ? "text-indigo-400" : "text-indigo-600"} mt-0.5 flex-shrink-0`} />
+                                    <span className={`text-sm leading-relaxed ${mounted && theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                         {contact.text}
                                     </span>
                                 </div>
@@ -182,29 +187,29 @@ export function Footer() {
             </div>
 
             {/* Bottom Bar */}
-            <div className={`border-t ${theme === "dark" ? "border-gray-800" : "border-gray-200"}`}>
+            <div className={`border-t ${mounted && theme === "dark" ? "border-gray-800" : "border-gray-200"}`}>
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                        <div className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                            Copyright © {currentYear} DIU CPC. All rights reserved. Developed by <Link href="/developed-by" className={`${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}>DIU CPC Web Team</Link>.
+                        <div className={`text-sm ${mounted && theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                            Copyright © {currentYear} DIU CPC. All rights reserved. Developed by <Link href="/developed-by" className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}>DIU CPC Web Team</Link>.
                         </div>
 
                         <div className="flex space-x-6 text-sm">
                             <Link
                                 href="/privacy"
-                                className={`${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
+                                className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
                             >
                                 Privacy Policy
                             </Link>
                             <Link
                                 href="/terms"
-                                className={`${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
+                                className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
                             >
                                 Terms of Service
                             </Link>
                             <Link
                                 href="/sitemap"
-                                className={`${theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
+                                className={`${mounted && theme === "dark" ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
                             >
                                 Sitemap
                             </Link>
@@ -216,7 +221,7 @@ export function Footer() {
             {/* Back to Top Button */}
             <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className={`fixed bottom-8 right-8 ${theme === "dark" ? "bg-indigo-600 hover:bg-indigo-700" : "bg-indigo-500 hover:bg-indigo-600"} hover:scale-110 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50`}
+                className={`fixed bottom-8 right-8 ${mounted && theme === "dark" ? "bg-indigo-600 hover:bg-indigo-700" : "bg-indigo-500 hover:bg-indigo-600"} hover:scale-110 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50`}
             >
                 <svg
                     className="w-6 h-6"

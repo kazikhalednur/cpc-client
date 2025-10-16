@@ -23,9 +23,14 @@ import CommitteeSection from "./_views/CommitteeSection";
 
 export default function Home() {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
-    <div className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"}`}>
+    <div className={`min-h-screen ${mounted && theme === "dark" ? "bg-gray-900" : "bg-gray-50"}`}>
       <Navigation />
       {/* Hero Section */}
       <HeroSection />
@@ -34,7 +39,7 @@ export default function Home() {
       <NoticeSection />
 
       {/* Quick Access Section */}
-      <section className={`py-12 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
+      <section className={`py-12 ${mounted && theme === "dark" ? "bg-gray-900" : "bg-white"}`}>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <QuickAccessCard
@@ -78,9 +83,9 @@ export default function Home() {
       <FeaturedContests />
 
       {/* Recent Achievements - Light Background */}
-      <section className={`py-16 ${theme === "dark" ? "bg-gray-800" : "bg-gray-50"}`}>
+      <section className={`py-16 ${mounted && theme === "dark" ? "bg-gray-800" : "bg-gray-50"}`}>
         <div className="container mx-auto px-4">
-          <h2 className={`text-3xl font-bold mb-8 text-center ${theme === "dark" ? "text-white" : "text-gray-800"}`}>
+          <h2 className={`text-3xl font-bold mb-8 text-center ${mounted && theme === "dark" ? "text-white" : "text-gray-800"}`}>
             Recent Achievements
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,7 +121,7 @@ export default function Home() {
       {/* Latest Blog Posts - Updated background and cards */}
       <section className="relative py-20 overflow-hidden">
         {/* Background Design */}
-        <div className={`absolute inset-0 ${theme === "dark" ? "bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950" : "bg-gradient-to-br from-gray-100 via-indigo-50 to-purple-50"}`}>
+        <div className={`absolute inset-0 ${mounted && theme === "dark" ? "bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950" : "bg-gradient-to-br from-gray-100 via-indigo-50 to-purple-50"}`}>
           {/* Animated Background Elements */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-float" />
@@ -130,7 +135,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-12">
-            <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${mounted && theme === "dark" ? "text-white" : "text-gray-900"}`}>
               Latest from Blog
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-indigo-400 to-purple-400 mx-auto rounded-full" />
@@ -172,8 +177,8 @@ export default function Home() {
             ].map((post, index) => (
               <div
                 key={index}
-                className={`${theme === "dark" ? "bg-white/10 backdrop-blur-lg" : "bg-white/80 backdrop-blur-lg"} rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 
-                           hover:-translate-y-1 overflow-hidden ${theme === "dark" ? "border border-white/20 hover:border-white/30" : "border border-gray-200 hover:border-gray-300"} group`}
+                className={`${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg" : "bg-white/80 backdrop-blur-lg"} rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 
+                           hover:-translate-y-1 overflow-hidden ${mounted && theme === "dark" ? "border border-white/20 hover:border-white/30" : "border border-gray-200 hover:border-gray-300"} group`}
               >
                 {/* Image Container */}
                 <div className="relative h-48 w-full overflow-hidden">
@@ -189,22 +194,22 @@ export default function Home() {
 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className={`text-xl font-bold mb-3 ${theme === "dark" ? "text-white group-hover:text-indigo-300" : "text-gray-900 group-hover:text-indigo-600"} transition-colors duration-300`}>
+                  <h3 className={`text-xl font-bold mb-3 ${mounted && theme === "dark" ? "text-white group-hover:text-indigo-300" : "text-gray-900 group-hover:text-indigo-600"} transition-colors duration-300`}>
                     {post.title}
                   </h3>
-                  <div className={`flex items-center gap-2 mb-4 text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+                  <div className={`flex items-center gap-2 mb-4 text-sm ${mounted && theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     <span>{post.author}</span>
                     <span>•</span>
                     <span>{post.date}</span>
                     <span>•</span>
                     <span>{post.readTime}</span>
                   </div>
-                  <p className={`mb-4 line-clamp-2 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+                  <p className={`mb-4 line-clamp-2 ${mounted && theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     {post.preview}
                   </p>
                   <a
                     href="#"
-                    className={`inline-flex items-center ${theme === "dark" ? "text-indigo-300 hover:text-indigo-200" : "text-indigo-600 hover:text-indigo-500"} font-medium group/link`}
+                    className={`inline-flex items-center ${mounted && theme === "dark" ? "text-indigo-300 hover:text-indigo-200" : "text-indigo-600 hover:text-indigo-500"} font-medium group/link`}
                   >
                     Read more
                     <span className="ml-1 transform transition-transform group-hover/link:translate-x-1">
@@ -220,7 +225,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <a
               href="/blog"
-              className={`inline-flex items-center px-6 py-3 rounded-full ${theme === "dark" ? "bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/15 hover:border-white/30" : "bg-white/80 backdrop-blur-lg border border-gray-200 text-gray-900 hover:bg-white hover:border-gray-300"} font-medium transition-all duration-300 hover:scale-105 group`}
+              className={`inline-flex items-center px-6 py-3 rounded-full ${mounted && theme === "dark" ? "bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/15 hover:border-white/30" : "bg-white/80 backdrop-blur-lg border border-gray-200 text-gray-900 hover:bg-white hover:border-gray-300"} font-medium transition-all duration-300 hover:scale-105 group`}
             >
               View All Posts
               <span className="ml-2 group-hover:translate-x-1 transition-transform">
