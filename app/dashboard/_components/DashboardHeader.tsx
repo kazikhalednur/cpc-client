@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { signOut, useSession } from "@/lib/auth/nextAuthClient";
 import Image from "next/image";
-import { FiBell, FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
+import { FiBell, FiMenu, FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "next-themes";
 
 export const DashboardHeader = () => {

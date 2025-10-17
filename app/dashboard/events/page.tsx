@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRole } from "@/hooks/useRole";
 import {
   FiPlus,
@@ -19,6 +19,7 @@ import { Role } from "@/types/role";
 import toast from "react-hot-toast";
 import { LoadingSpinner } from "@/app/components/LoadingSpinner";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 type EventStatus = "UPCOMING" | "ONGOING" | "COMPLETED";
 
@@ -32,7 +33,7 @@ export default function EventsPage() {
   const debouncedSearch = useDebounce(search, 300);
   const { isAllowed } = useRole([Role.SUPER_ADMIN, Role.ADMIN]);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (status !== "ALL") params.append("status", status);
@@ -48,11 +49,11 @@ export default function EventsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [debouncedSearch, status]);
 
   useEffect(() => {
     fetchEvents();
-  }, [debouncedSearch, status]);
+  }, [debouncedSearch, status, fetchEvents]);
 
   const handleSubmit = async (data: Partial<EventData>) => {
     try {
@@ -114,14 +115,6 @@ export default function EventsPage() {
     }
   };
 
-  const getStatusColor = (status: EventStatus) => {
-    const colors = {
-      UPCOMING: "bg-emerald-500 text-white",
-      ONGOING: "bg-blue-500 text-white",
-      COMPLETED: "bg-gray-500 text-white",
-    };
-    return colors[status] || colors.UPCOMING;
-  };
 
   if (!isAllowed) return null;
 
@@ -198,9 +191,11 @@ export default function EventsPage() {
                 transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700"
             >
               <div className="relative h-48">
-                <img
+                <Image
                   src={event.image}
                   alt={event.title}
+                  width={400}
+                  height={192}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

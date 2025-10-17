@@ -7,7 +7,6 @@ import {
   FiCalendar,
   FiClock,
   FiMapPin,
-  FiUser,
   FiUsers,
   FiShare2,
   FiDownload,
@@ -58,7 +57,7 @@ export default function EventDetailsPage() {
         text: event?.short_description,
         url: window.location.href,
       });
-    } catch (error) {
+    } catch {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard!");
     }
@@ -76,7 +75,7 @@ export default function EventDetailsPage() {
       // Add registration logic here
       await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success("Registration successful!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to register");
     } finally {
       setIsRegistering(false);

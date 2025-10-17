@@ -6,13 +6,9 @@ import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import {
     FiMail,
-    FiPhone,
     FiMapPin,
     FiFacebook,
-    FiTwitter,
-    FiInstagram,
     FiLinkedin,
-    FiYoutube,
     FiGithub,
     FiExternalLink,
 } from "react-icons/fi";

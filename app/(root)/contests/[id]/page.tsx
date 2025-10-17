@@ -18,7 +18,6 @@ import {
     FiXCircle,
     FiAlertCircle,
     // FiCode,
-    FiTrophy,
     FiStar,
 } from "react-icons/fi";
 export default function ContestDetailPage() {
@@ -80,10 +79,6 @@ export default function ContestDetailPage() {
         return `${minutes} minutes remaining`;
     };
 
-    const canRegister = () => {
-        if (!contest) return false;
-        return contest.status === "UPCOMING" && !isRegistered;
-    };
 
     if (isLoading) {
         return (
@@ -238,7 +233,7 @@ export default function ContestDetailPage() {
                                         {Array.isArray((contest as unknown as { prizes?: Array<{ position?: string; prize?: string; title?: string }> }).prizes) && (contest as unknown as { prizes: Array<{ position?: string; prize?: string; title?: string }> }).prizes.length > 0 && (
                                             <div className="mb-8">
                                                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                                                    <FiTrophy className="w-5 h-5 mr-2 text-yellow-500" />
+                                                    <FiAward className="w-5 h-5 mr-2 text-yellow-500" />
                                                     Prizes
                                                 </h3>
                                                 <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">

@@ -1,5 +1,4 @@
 // Auth server session and route were removed. Adjust or re-add when backend is restored.
-import { redirect } from "next/navigation";
 import { Sidebar } from "./_components/Sidebar";
 import { DashboardHeader } from "./_components/DashboardHeader";
 

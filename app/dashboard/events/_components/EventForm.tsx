@@ -6,7 +6,6 @@ import {
   FiImage,
   FiCalendar,
   FiMapPin,
-  FiUsers,
   FiInfo,
 } from "react-icons/fi";
 import { EventData } from "@/types/event";
@@ -68,8 +67,7 @@ export default function EventForm({
 
     // Combine date and time for registration deadline
     const deadlineDateTime = new Date(
-      `${formData.registrationDeadline}T${
-        formData.deadlineTime || "00:00"
+      `${formData.registrationDeadline}T${formData.deadlineTime || "00:00"
       }:00.000Z`
     );
 

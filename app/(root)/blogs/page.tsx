@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import Image from "next/image";
 import { Navigation } from "@/app/components/Navigation";
-import { FiCalendar, FiUser, FiClock, FiArrowRight, FiSearch } from "react-icons/fi";
+import { FiCalendar, FiClock, FiArrowRight, FiSearch } from "react-icons/fi";
 import { useGetBlogCategoriesQuery, useGetBlogsQuery } from "@/lib/api/blogApi";
 
 

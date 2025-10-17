@@ -5,9 +5,7 @@ import {
   FiX,
   FiImage,
   FiCalendar,
-  FiClock,
   FiAward,
-  FiTag,
   FiInfo,
 } from "react-icons/fi";
 import { Contest } from "@/app/types";
@@ -166,9 +164,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.title ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.title ? "border-red-500" : ""
+                    }`}
                   placeholder="e.g., Weekly Algorithm Challenge"
                   required
                 />
@@ -186,9 +183,8 @@ export default function ContestForm({
                     setFormData({ ...formData, description: e.target.value })
                   }
                   rows={4}
-                  className={`${inputClasses} ${
-                    errors.description ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.description ? "border-red-500" : ""
+                    }`}
                   placeholder="Describe the contest objectives and requirements..."
                   required
                 />
@@ -213,9 +209,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, startDate: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.startDate ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.startDate ? "border-red-500" : ""
+                    }`}
                   required
                 />
                 {errors.startDate && (
@@ -234,9 +229,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, startTime: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.startTime ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.startTime ? "border-red-500" : ""
+                    }`}
                   required
                 />
                 {errors.startTime && (
@@ -255,9 +249,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, endDate: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.endDate ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.endDate ? "border-red-500" : ""
+                    }`}
                   required
                 />
                 {errors.endDate && (
@@ -274,9 +267,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, endTime: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.endTime ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.endTime ? "border-red-500" : ""
+                    }`}
                   required
                 />
                 {errors.endTime && (
@@ -298,9 +290,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, platform: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.platform ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.platform ? "border-red-500" : ""
+                    }`}
                   placeholder="e.g., Codeforces, LeetCode"
                   required
                 />
@@ -318,9 +309,8 @@ export default function ContestForm({
                   onChange={(e) =>
                     setFormData({ ...formData, prize: e.target.value })
                   }
-                  className={`${inputClasses} ${
-                    errors.prize ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.prize ? "border-red-500" : ""
+                    }`}
                   placeholder="e.g., $500"
                   required
                 />
@@ -340,9 +330,8 @@ export default function ContestForm({
                       difficulty: e.target.value as Contest["difficulty"],
                     })
                   }
-                  className={`${inputClasses} ${
-                    errors.difficulty ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.difficulty ? "border-red-500" : ""
+                    }`}
                   required
                 >
                   <option value="EASY">Easy</option>
@@ -367,9 +356,8 @@ export default function ContestForm({
                       status: e.target.value as Contest["status"],
                     })
                   }
-                  className={`${inputClasses} ${
-                    errors.status ? "border-red-500" : ""
-                  }`}
+                  className={`${inputClasses} ${errors.status ? "border-red-500" : ""
+                    }`}
                   required
                 >
                   <option value="UPCOMING">Upcoming</option>
@@ -394,9 +382,8 @@ export default function ContestForm({
                 onChange={(e) =>
                   setFormData({ ...formData, image: e.target.value })
                 }
-                className={`${inputClasses} ${
-                  errors.image ? "border-red-500" : ""
-                }`}
+                className={`${inputClasses} ${errors.image ? "border-red-500" : ""
+                  }`}
                 placeholder="Enter image URL"
                 required
               />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
 import {
@@ -16,7 +16,7 @@ import {
 } from "react-icons/fi";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Notice, NoticeCategory } from "@/types/notice";
+import { Notice } from "@/types/notice";
 import { noticeApi } from "@/lib/api/noticeApi";
 
 const categoryColors: { [key: string]: string } = {
@@ -38,37 +38,18 @@ export default function NoticeDetailPage() {
     const noticeId = params.id as string;
 
     const [notice, setNotice] = useState<Notice | null>(null);
-    const [categories, setCategories] = useState<NoticeCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        loadCategories();
-    }, []);
 
     useEffect(() => {
         if (noticeId) {
             loadNotice();
         }
-    }, [noticeId]);
+    }, [noticeId, loadNotice]);
 
-    const loadCategories = async () => {
-        try {
-            const response = await noticeApi.getCategories();
-            setCategories(response.data);
-        } catch (err) {
-            console.error("Error loading categories:", err);
-            // Fallback to default categories if API fails
-            setCategories([
-                { title: "Announcements" },
-                { title: "Events" },
-                { title: "Achievements" },
-                { title: "General" }
-            ]);
-        }
-    };
 
-    const loadNotice = async () => {
+    const loadNotice = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -81,7 +62,7 @@ export default function NoticeDetailPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [noticeId]);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -142,7 +123,7 @@ export default function NoticeDetailPage() {
                     text: notice.content.substring(0, 200) + "...",
                     url: window.location.href,
                 });
-            } catch (err) {
+            } catch {
                 // Fallback to clipboard
                 navigator.clipboard.writeText(window.location.href);
             }

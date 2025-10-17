@@ -46,7 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         initAuth();
     }, []);
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         try {
             // Get refresh token before clearing
             const refreshToken = TokenManager.getRefreshToken();
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             toast.success('Logged out successfully');
             router.push('/auth/signin');
         }
-    };
+    }, [router]);
 
     const refreshToken = useCallback(async (): Promise<boolean> => {
         try {

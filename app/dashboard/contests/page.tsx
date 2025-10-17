@@ -16,6 +16,7 @@ import { Contest } from "@/app/types";
 import { motion } from "framer-motion";
 import { LoadingSpinner } from "@/app/components/LoadingSpinner";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 type ContestStatus = "Upcoming" | "Ongoing" | "Completed";
 
@@ -167,22 +168,23 @@ export default function ContestDashboard() {
                 transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700"
             >
               <div className="relative h-48">
-                <img
+                <Image
                   src={contest.image || "/images/contest-placeholder.jpg"}
                   alt={contest.title}
+                  width={400}
+                  height={192}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        contest.status === "UPCOMING"
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${contest.status === "UPCOMING"
                           ? "bg-green-100 text-green-800"
                           : contest.status === "ONGOING"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {contest.status}
                     </span>

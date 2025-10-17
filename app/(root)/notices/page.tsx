@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Navigation } from "@/app/components/Navigation";
-import { FiCalendar, FiClock, FiTag, FiArrowLeft, FiSearch, FiFilter, FiLoader } from "react-icons/fi";
+import { FiCalendar, FiClock, FiArrowLeft, FiSearch, FiLoader } from "react-icons/fi";
 import Link from "next/link";
 import { Notice, NoticeFilters, NoticeCategory } from "@/types/notice";
 import { noticeApi } from "@/lib/api/noticeApi";
@@ -43,7 +43,7 @@ export default function NoticesPage() {
     // Load notices on component mount and when filters change
     useEffect(() => {
         loadNotices();
-    }, [debouncedSearchTerm, selectedCategory, selectedPriority]);
+    }, [debouncedSearchTerm, selectedCategory, selectedPriority, loadNotices]);
 
     const loadCategories = async () => {
         try {
@@ -61,7 +61,7 @@ export default function NoticesPage() {
         }
     };
 
-    const loadNotices = async () => {
+    const loadNotices = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -80,7 +80,7 @@ export default function NoticesPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [debouncedSearchTerm, selectedCategory, selectedPriority]);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);

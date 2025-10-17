@@ -6,7 +6,6 @@ import Image from "next/image";
 import { IconType } from "react-icons";
 import {
   FiHome,
-  FiUser,
   FiAward,
   FiBook,
   FiCalendar,
@@ -96,37 +95,33 @@ export const Sidebar = () => {
                 key={item.href}
                 href={item.href}
                 className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 
-                  ${
-                    isActive
-                      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  ${isActive
+                    ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                   }`}
               >
                 <div className="flex items-center gap-3 flex-1">
                   <div
                     className={`p-2 rounded-lg transition-colors duration-200 
-                      ${
-                        isActive
-                          ? "bg-indigo-100 dark:bg-indigo-900/50"
-                          : "bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700"
+                      ${isActive
+                        ? "bg-indigo-100 dark:bg-indigo-900/50"
+                        : "bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700"
                       }`}
                   >
                     <item.icon
                       className={`h-5 w-5 transition-colors duration-200 
-                        ${
-                          isActive
-                            ? "text-indigo-600 dark:text-indigo-400"
-                            : "text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                        ${isActive
+                          ? "text-indigo-600 dark:text-indigo-400"
+                          : "text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"
                         }`}
                     />
                   </div>
                   <div className="flex-1">
                     <p
-                      className={`text-sm font-medium ${
-                        isActive
+                      className={`text-sm font-medium ${isActive
                           ? "text-indigo-600 dark:text-indigo-400"
                           : "text-gray-700 dark:text-gray-200"
-                      }`}
+                        }`}
                     >
                       {item.label}
                     </p>

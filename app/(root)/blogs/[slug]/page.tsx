@@ -157,7 +157,7 @@ export default function BlogDetail() {
                                         const res = await likeBlog({ slug }).unwrap();
                                         setLiked(res.liked);
                                         setLikesCount(res.likes);
-                                    } catch (_e) {
+                                    } catch {
                                         // ignore for now or show toast
                                     }
                                 }}
@@ -178,7 +178,7 @@ export default function BlogDetail() {
                                         const res = await bookmarkBlog({ slug }).unwrap();
                                         setBookmarked(res.bookmarked);
                                         setBookmarksCount(res.bookmarks);
-                                    } catch (_e) {
+                                    } catch {
                                         // ignore for now or show toast
                                     }
                                 }}

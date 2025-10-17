@@ -33,7 +33,7 @@ export default function CertificateVerification() {
 
       const data = await response.json();
       setSearchResult(data);
-    } catch (e) {
+    } catch {
       setError("Invalid certificate number or certificate not found");
     } finally {
       setIsLoading(false);

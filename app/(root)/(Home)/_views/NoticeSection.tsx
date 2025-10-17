@@ -8,7 +8,7 @@ const NoticeSection = () => {
   const [theme] = useState<"light" | "dark">("light");
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
-  const [_, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadNotices();
