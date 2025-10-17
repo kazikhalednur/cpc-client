@@ -41,14 +41,6 @@ export default function NoticeDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-
-    useEffect(() => {
-        if (noticeId) {
-            loadNotice();
-        }
-    }, [noticeId, loadNotice]);
-
-
     const loadNotice = useCallback(async () => {
         try {
             setLoading(true);
@@ -63,6 +55,12 @@ export default function NoticeDetailPage() {
             setLoading(false);
         }
     }, [noticeId]);
+
+    useEffect(() => {
+        if (noticeId) {
+            loadNotice();
+        }
+    }, [noticeId, loadNotice]);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);

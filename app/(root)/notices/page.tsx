@@ -35,16 +35,6 @@ export default function NoticesPage() {
     // Debounce search term to avoid too many API calls
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-    // Load categories on component mount
-    useEffect(() => {
-        loadCategories();
-    }, []);
-
-    // Load notices on component mount and when filters change
-    useEffect(() => {
-        loadNotices();
-    }, [debouncedSearchTerm, selectedCategory, selectedPriority, loadNotices]);
-
     const loadCategories = async () => {
         try {
             const response = await noticeApi.getCategories();
@@ -81,6 +71,16 @@ export default function NoticesPage() {
             setLoading(false);
         }
     }, [debouncedSearchTerm, selectedCategory, selectedPriority]);
+
+    // Load categories on component mount
+    useEffect(() => {
+        loadCategories();
+    }, []);
+
+    // Load notices on component mount and when filters change
+    useEffect(() => {
+        loadNotices();
+    }, [debouncedSearchTerm, selectedCategory, selectedPriority, loadNotices]);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);

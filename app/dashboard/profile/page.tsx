@@ -59,7 +59,7 @@ export default function Profile() {
       if (!response.ok) throw new Error("Failed to upload image");
 
       const data = await response.json();
-      await update({ image: data.imageUrl });
+      await update({ user: { image: data.imageUrl } });
       toast.success("Profile image updated!");
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -78,7 +78,7 @@ export default function Profile() {
 
       if (!response.ok) throw new Error("Failed to update profile");
 
-      await update(formData);
+      await update({ user: formData });
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
